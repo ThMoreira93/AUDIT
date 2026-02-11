@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AUDIT – Auditoria de Viagens</title>
+<link rel="icon" type="image/png" href="favicon.png">
+  
+  <!-- Fontes e Ícones -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  
+  <style>
+    :root {
+      --primary: #6D28D9;
+      --primary-hover: #5B21B6;
+      --primary-light: #EDE9FE;
+      --bg-main: #F8FAFC;
+      --bg-card: #FFFFFF;
+      --text-main: #1E293B;
+      --text-muted: #64748B;
+      --border: #E2E8F0;
+      --success: #10B981;
+      --danger: #EF4444;
+      --warning: #F59E0B;
+      --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+    
+    body { 
+      margin: 0; padding: 16px; background: var(--bg-main); 
+      font-family: 'Inter', sans-serif; color: var(--text-main);
+      line-height: 1.5;
+    }
+
+    .container { max-width: 600px; margin: 0 auto; }
+
+    /* ===== HEADER ===== */
+    .header { text-align: center; margin-bottom: 24px; padding-top: 10px; }
+    .brand-icon {
+      width: 72px; height: 72px; margin: 0 auto 12px;
+      border-radius: 20px; background: linear-gradient(135deg, #4C1D95 0%, #6D28D9 100%);
+      color: #fff; display: flex; align-items: center; justify-content: center;
+      font-size: 32px; box-shadow: 0 12px 20px rgba(109, 40, 217, 0.3);
+    }
+    .header h1 { margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -1px; }
+    .header p { margin: 4px 0 0; color: var(--text-muted); font-size: 14px; font-weight: 500; }
+
+    /* ===== CARDS ===== */
+    .card {
+      background: var(--bg-card); border-radius: 24px; border: 1px solid var(--border);
+      box-shadow: var(--shadow); margin-bottom: 20px; overflow: hidden;
+    }
+    .card-header {
+      padding: 16px 20px; background: #F1F5F9; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--text-main); font-size: 15px;
+    }
+    .card-body { padding: 20px; }
+
+    /* ===== FORMS ===== */
+    .form-group { margin-bottom: 18px; position: relative; }
+    .label {
+      display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700;
+      color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px;
+    }
+    .input-wrapper { position: relative; }
+    .input-wrapper i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #94A3B8; font-size: 16px; }
+
+    .input, select, textarea {
+      width: 100%; padding: 12px 14px 12px 42px; border: 2px solid var(--border);
+      border-radius: 14px; background: #fff; font-family: inherit; font-size: 15px;
+      outline: none; transition: 0.2s;
+    }
+    .input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-light); }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .readonly { background: #F8FAFC; color: #64748B; cursor: not-allowed; }
+
+    /* ===== ELIGIBILIDADE ===== */
+    .elig-box { background: #F1F5F9; border: 1.5px dashed var(--border); border-radius: 18px; padding: 16px; margin-top: 10px; }
+    .elig-title { font-weight: 800; font-size: 14px; margin-bottom: 10px; display: flex; justify-content: space-between; }
+    .pill-group { display: flex; flex-wrap: wrap; gap: 8px; }
+    .pill { padding: 6px 12px; border-radius: 10px; font-size: 12px; font-weight: 700; background: #E2E8F0; color: var(--text-main); }
+    .pill.ok { background: #DCFCE7; color: #166534; }
+    .pill.bad { background: #FEE2E2; color: #991B1B; }
+
+    /* ===== BUTTONS ===== */
+    .btn {
+      width: 100%; padding: 14px; border: none; border-radius: 16px; font-weight: 800; font-size: 16px;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s;
+    }
+    .btn-primary { background: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(109, 40, 217, 0.3); }
+    .btn:disabled { background: #CBD5E1; color: #94A3B8; cursor: not-allowed; box-shadow: none; }
+
+    /* ===== TABS ===== */
+    .tabs { display: flex; gap: 8px; margin-bottom: 15px; }
+    .tab-btn {
+      flex: 1; padding: 10px; border-radius: 10px; border: 1px solid var(--border);
+      background: #fff; font-weight: 700; font-size: 13px; cursor: pointer; color: var(--text-muted);
+    }
+    .tab-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; animation: fadeIn 0.3s ease; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+    .toast {
+      position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%);
+      background: #1E293B; color: #fff; padding: 14px 24px; border-radius: 16px;
+      font-weight: 600; font-size: 14px; opacity: 0; pointer-events: none; transition: 0.3s;
+      z-index: 1000; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+    .toast.show { opacity: 1; bottom: 30px; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header class="header">
+      <div class="brand-icon"><i class="fa-solid fa-route"></i></div>
+      <h1>AUDIT</h1>
+      <p>Lançamento de Diária de Viagem</p>
+    </header>
+
+    <div class="card">
+      <div class="card-header"><i class="fa-solid fa-plus-circle"></i> Nova Solicitação</div>
+      <div class="card-body">
+        <form id="formSolicitacao">
+          <div class="form-group">
+            <label class="label">Colaborador</label>
+            <div class="input-wrapper">
+              <i class="fa-solid fa-user-tie"></i>
+              <select id="colaborador" class="input" required></select>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="label">Data Saída</label>
+              <div class="input-wrapper"><i class="fa-solid fa-calendar-day"></i><input id="dataSaida" type="date" class="input" required></div>
+            </div>
+            <div class="form-group">
+              <label class="label">Hora Saída</label>
+              <div class="input-wrapper"><i class="fa-solid fa-clock"></i><input id="horaSaida" type="time" class="input" required></div>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="label">Data Retorno</label>
+              <div class="input-wrapper"><i class="fa-solid fa-calendar-check"></i><input id="dataRet" type="date" class="input" required></div>
+            </div>
+            <div class="form-group">
+              <label class="label">Hora Retorno</label>
+              <div class="input-wrapper"><i class="fa-solid fa-clock"></i><input id="horaRet" type="time" class="input" required></div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="label">Nota/Atividade</label>
+            <div class="input-wrapper"><i class="fa-solid fa-hashtag"></i><input id="numNota" class="input" placeholder="NF ou OS..." required></div>
+          </div>
+
+          <div class="form-group">
+            <label class="label">Destino</label>
+            <div class="input-wrapper"><i class="fa-solid fa-location-dot"></i><input id="destino" class="input" placeholder="Cidade/Bairro" required></div>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="label">Placa</label>
+              <div class="input-wrapper">
+                <i class="fa-solid fa-car-side"></i>
+                <select id="placa" class="input" required>
+                  <option value="" disabled selected>Carregando...</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="label">Frota</label>
+              <div class="input-wrapper"><i class="fa-solid fa-barcode"></i><input id="frota" class="input readonly" readonly placeholder="-"></div>
+            </div>
+          </div>
+
+          <div class="elig-box">
+            <div class="elig-title"><span>Resumo</span><span id="pillStatus" class="pill bad">Aguardando dados</span></div>
+            <div class="pill-group">
+              <span id="pillTempo" class="pill">Tempo: --:--</span>
+              <span id="pillValor" class="pill">Valor: R$ 0,00</span>
+            </div>
+          </div>
+
+          <button id="btnEnviar" class="btn btn-primary" style="margin-top: 20px;" disabled><i class="fa-solid fa-paper-plane"></i> Enviar Solicitação</button>
+        </form>
+      </div>
+    </div>
+
+    
+        <div id="por-num" class="tab-pane active">
+          <div style="display:flex; gap:10px">
+            <div class="input-wrapper" style="flex:1"><i class="fa-solid fa-hashtag"></i><input id="consultaNum" class="input" placeholder="Nº Solicitação"></div>
+            <button id="btnConsultar" class="btn btn-primary" style="width: auto;"><i class="fa-solid fa-arrow-right"></i></button>
+          </div>
+        </div>
+        <div id="por-colab" class="tab-pane">
+          <div class="form-group"><div class="input-wrapper"><i class="fa-solid fa-user"></i><select id="consultaColab" class="input"></select></div></div>
+          <button id="btnConsultarColab" class="btn btn-primary">Buscar Registros</button>
+        </div>
+        <div id="resultado" style="margin-top: 15px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <!-- FIREBASE SCRIPTS -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+
+  <script>
+    const COLABS = ["ADAILDO SOUZA FERNANDES - 356484", "ADILSON DIAS DA SILVA - 340393", "ADRIANO DA SILVA ALVES - 346413", "AGNALDO DE JESUS SANTOS - 354049", "AILTON BATISTA DOS SANTOS - 469065", "ALAEL FERREIRA NASCIMENTO - 346415", "ALAN DA CRUZ SANTOS - 346418", "ALAN DE JESUS FERREIRA - 346422", "ALBERTO DE JESUS SANTOS - 462694", "ALEX ALVES DE JESUS - 354050", "ANDERSON BORGES DOS SANTOS - 621262", "ANDERSON DA SILVA PINTO - 465199", "ANDERSON DOS SANTOS FONSECA - 346435", "ANDERSON DOS SANTOS MENDES - 615539", "ANTONIO ALVES MONTEIRO NETO - 346438", "BISMARCK JESUS DE SANTANA - 356747", "BRUNA DAMASCENO SANTOS DO NASCIMENTO - 361645", "BRUNO DA HORA ROMA - 346445", "CALINE ROCHA NASCIMENTO - 615541", "CARLOS HENRIQUE SANTOS DE JESUS - 462673", "CINTIA SANTOS SILVA - 615715", "CLAUDIO RODRIGUES SAMPAIO - 465227", "CRISPIM DE SANTANA OLIVEIRA - 465211", "DAVID SENA DA LUZ LIMA - 340302", "DERLANDIO BORGES DA SILVA - 342658", "DIOGO MATHEUS OLIVEIRA COELHO - 340305", "EDVALDO NAPOLEAO DOS SANTOS JUNIOR - 615538", "ELTON GARCIA DE ABREU - 463135", "ERINALDO NERY DE SOUSA - 346339", "FABIO JUNIOR JOSE MATOS - 357696", "FABIO SOUSA PORTO - 346358", "FARAH CARDOSO NASCIMENTO - 461334", "FLAVIO PARAISO SANTOS - 346419", "FRANKLIN SOUZA SILVA - 462720", "GABRIEL COSTA DE SANTANA - 621266", "GEORGE SILVA NEVES - 462670", "GILVAN SANTOS VIEIRA - 461605", "GIOVANNE SANTOS SOUZA - 360660", "HILDEBRANDO DA SILVA DOS SANTOS - 353033", "JABSON LIMA BISPO DOS SANTOS - 351080", "JACSON DO NASCIMENTO CRUZ - 462668", "JEFFERSON CESAR SOUZA MARTINS - 346320", "JEFFERSON SANTOS DA SILVA - 358108", "JENIFFER FERNANDA SOUZA MARTINS - 618262", "JEOMICRES SANTOS SILVA - 346321", "JHAYON ARAUJO DA SILVA - 361643", "JOABSON DA SILVA DAMASIO - 346325", "JOAO VIRGILIO DE AARAUJO NETO - 340410", "JOBSON SOUZA DOS SANTOS - 346327", "JOELLINGTON AVILA CORREIA - 354089", "JONATAS LEAL DOS SANTOS - 346332", "JONATHA BATISTA DOS SANTOS - 621262", "JOSE ALFREDO SILVA DA CONCEIÇÃO - 462721", "LEANDRO COSTA SANTOS - 462816", "LEANDRO DOS SANTOS VIEIRA - 361422", "LEONARDO DOS SANTOS RODRIGUES - 618697", "LUAN LIMA GOMES DA SILVA - 352454", "LUCAS DOS SANTOS CUNHA - 464546", "LUEDSON DE JESUS SILVA - 462370", "MARCELO BARBOSA GOES - 340414", "MARCIA OLIVEIRA DA SILVA - 615540", "MARCOS ANDRADE DE SOUZA - 468428", "MARCOS ROBERTO OLIVEIRA DOS SANTOS - 462722", "MARCOS VINICIUS MENDES DA SILVA - 621241", "MARIANO SEBASTIAN RIVERO - 346462", "NAILTON BATISTA DOS SANTOS - 352029", "NAOMAR SOARES PEIXOTO - 462705", "OSMAR CARDOSO MELO NETO - 462826", "PAULO ROBERTO OLIVERIA DE JESUS JUNIOR - 621263", "RENAN CORREIA SANTOS - 346404", "RODRIGO JESUS DOS ANJOS - 462669", "ROMULO SILVA CONCEICAO - 346454", "SAIMON OLIVEIRA MARQUES RAMOS - 621245", "SERGIO SOARES DA SILVA - 346460", "TADEU DE OLIVEIRA MAGALHÃES - 356071", "TARCISIO PERCILIO DOS SANTOS - 621244", "THAIRONE MORAES SANTOS - 462710", "THALLYS SILVA RAMALHO DE SOUZA - 465234", "THIAGO DE ASSIS VIANA - 346433", "UILLIAM SILVA SANTOS - 340352", "VALDEMER DA PENHA DE JESUS FILHO - 621242", "VALDINEIA RODRIGUES DAMASCENO - 616839", "VINICIUS MACHADO GUIMARAES - 468653", "VINICIUS SANTOS DA PAIXAO - 345950", "VINICIUS SANTOS TAVARES - 618263", "WANDERSON LINO SANTOS - 460799", "WELIGTON FARIAS OLIVIERA - 461463", "WELTON SOUZA TEIXEIRA - 348673", "WESLEY COSTA PRATA - 345138", "YSAK PACHECO SANTOS - 618266"];
+    
+    const firebaseConfig = {"apiKey": "AIzaSyBMtXm9wInJb9xrBFU5gyEIMKuWuVzknSU", "authDomain": "deslocamento-3bcd0.firebaseapp.com", "projectId": "deslocamento-3bcd0", "storageBucket": "deslocamento-3bcd0.firebasestorage.app", "messagingSenderId": "1041622437635", "appId": "1:1041622437635:web:9a0e8b026879919676e336", "measurementId": "G-JKWV37MFHB"};
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const $ = (id) => document.getElementById(id);
+
+    function toast(msg, type='info') {
+      const t = $('toast'); t.textContent = msg;
+      t.style.borderLeft = `5px solid ${type==='error'?'#ef4444':'#10b981'}`;
+      t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    // --- CORREÇÃO DA LISTAGEM DE VEÍCULOS ---
+    function watchVehicles() {
+      // Usando onSnapshot para atualizar em tempo real sem precisar de refresh
+      db.collection('veiculos').onSnapshot(snap => {
+        const sel = $('placa');
+        if (snap.empty) {
+          sel.innerHTML = '<option value="" disabled selected>Nenhum veículo cadastrado</option>';
+          return;
+        }
+        
+        // Mapeia os documentos. O ID do documento é a placa.
+        let options = '<option value="" disabled selected>Selecione a Placa</option>';
+        snap.docs.forEach(doc => {
+          const placaId = doc.id;
+          const frotaNum = doc.data().frota || '-';
+          options += `<option value="${placaId}" data-frota="${frotaNum}">${placaId}</option>`;
+        });
+        sel.innerHTML = options;
+      }, err => {
+        console.error("Erro ao carregar veículos:", err);
+        $('placa').innerHTML = '<option>Erro ao carregar</option>';
+      });
+    }
+
+    $('placa').onchange = () => {
+      const opt = $('placa').options[$('placa').selectedIndex];
+      $('frota').value = opt.dataset.frota || '';
+    }
+
+    // --- CÁLCULO E ENVIO ---
+    function updateElegibility() {
+      const d1 = $('dataSaida').value, h1 = $('horaSaida').value;
+      const d2 = $('dataRet').value, h2 = $('horaRet').value;
+      if(!d1 || !h1 || !d2 || !h2) return;
+      const s = new Date(`${d1}T${h1}`), r = new Date(`${d2}T${h2}`);
+      if(r <= s) { $('pillTempo').textContent = "Erro: Data Inválida"; $('btnEnviar').disabled = true; return; }
+
+      const minutos = Math.floor((r - s) / 60000);
+      const DIARIA = 92.82, MEIA = 46.41;
+      let valor = 0, ok = false;
+      if (minutos >= 360) {
+        ok = true;
+        const dias = Math.floor(minutos / 1440);
+        const resto = minutos % 1440;
+        valor = dias * DIARIA;
+        if(resto >= 720) valor += DIARIA; else if(resto >= 360) valor += MEIA;
+      }
+      $('pillTempo').textContent = `Tempo: ${Math.floor(minutos/60)}h ${minutos%60}m`;
+      $('pillValor').textContent = `Valor: R$ ${valor.toFixed(2).replace('.', ',')}`;
+      const ps = $('pillStatus');
+      if(ok) { ps.textContent = "Elegível"; ps.className = "pill ok"; $('btnEnviar').disabled = false; }
+      else { ps.textContent = "Não elegível (<6h)"; ps.className = "pill bad"; $('btnEnviar').disabled = true; }
+      return { minutos, valor, ok };
+    }
+
+    ['dataSaida','horaSaida','dataRet','horaRet'].forEach(id => $(id).onchange = updateElegibility);
+
+    $('formSolicitacao').onsubmit = async (e) => {
+      e.preventDefault();
+      const info = updateElegibility();
+      const num = Math.floor(100000 + Math.random() * 900000);
+      const doc = {
+        numero: num, colaborador: $('colaborador').value,
+        dataSaida: $('dataSaida').value, horaSaida: $('horaSaida').value,
+        dataRetorno: $('dataRet').value, horaRetorno: $('horaRet').value,
+        numeroNotaAtividade: $('numNota').value, destino: $('destino').value,
+        placa: $('placa').value, frota: $('frota').value,
+        duracaoMinutos: info.minutos, duracaoTexto: `${Math.floor(info.minutos/60)}h ${info.minutos%60}m`,
+        valor: info.valor, status: 'Pendente', createdAt: new Date().toISOString()
+      };
+      try {
+        await db.collection('solicitacoes_diaria').add(doc);
+        toast(`Solicitação #${num} enviada!`, "success");
+        e.target.reset(); updateElegibility();
+      } catch(err) { toast("Erro ao enviar.", "error"); }
+    };
+
+    // --- UI TABS & CONSULTA ---
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      b.onclick = () => {
+        document.querySelectorAll('.tab-btn, .tab-pane').forEach(x => x.classList.remove('active'));
+        b.classList.add('active'); $(b.dataset.tab).classList.add('active');
+      }
+    });
+
+    function renderCard(d) {
+      return `<div style="background:#fff; border:1px solid #e2e8e0; border-radius:16px; padding:15px; margin-bottom:10px; font-size:13px; box-shadow: 0 2px 4px rgba(0,0,0,0.05)">
+          <div style="display:flex; justify-content:space-between; margin-bottom:8px"><span style="font-weight:800">#${d.numero}</span><span class="pill ${d.status==='Aprovado'?'ok':(d.status==='Reprovado'?'bad':'')}">${d.status}</span></div>
+          <div>Destino: <b>${d.destino}</b></div><div>Data: ${d.dataSaida.split('-').reverse().join('/')}</div><div style="margin-top:5px; font-weight:700">Valor: R$ ${d.valor.toFixed(2).replace('.',',')}</div>
+          ${d.observacao ? `<div style="margin-top:5px; font-size:11px; color:var(--danger)"><b>Obs:</b> ${d.observacao}</div>` : ''}
+        </div>`;
+    }
+
+    $('btnConsultar').onclick = async () => {
+      const n = Number($('consultaNum').value); if(!n) return;
+      const snap = await db.collection('solicitacoes_diaria').where('numero', '==', n).limit(1).get();
+      $('resultado').innerHTML = snap.empty ? "Não encontrado." : renderCard(snap.docs[0].data());
+    };
+
+    $('btnConsultarColab').onclick = async () => {
+      const c = $('consultaColab').value; if(!c) return;
+      const snap = await db.collection('solicitacoes_diaria').where('colaborador', '==', c).orderBy('createdAt', 'desc').limit(5).get();
+      $('resultado').innerHTML = snap.empty ? "Sem registros." : snap.docs.map(d => renderCard(d.data())).join('');
+    };
+
+    // Inits
+    (function init() {
+      const opts = ['<option value="" disabled selected>Escolha o colaborador</option>'].concat(COLABS.map(c => `<option value="${c}">${c}</option>`)).join('');
+      $('colaborador').innerHTML = opts; $('consultaColab').innerHTML = opts;
+      watchVehicles();
+    })();
+  </script>
+</body>
+</html>
+
