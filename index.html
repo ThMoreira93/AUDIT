@@ -341,6 +341,7 @@
           <div class="pill-group">
             <span id="hePillMin" class="pill">Duração: -- min</span>
             <span id="hePillFaixa" class="pill">Faixa: -</span>
+ <span id="hePillCont" class="pill">Contabilizado: -- min</span>
           </div>
         </div>
 
@@ -489,6 +490,8 @@ function setMode(mode){
   $('btnSwitch').innerHTML = isV ? '<i class="fa-solid fa-repeat"></i> Alternar para Hora Extra' : '<i class="fa-solid fa-repeat"></i> Alternar para Viagem';
 }
 $('optViagem').onclick = () => setMode('viagem');
+  // valida HE inicialmente
+  try{ heValidate(); }catch(e){}
 $('optHE').onclick = () => setMode('he');
 $('btnSwitch').onclick = () => {
   const showingV = !$('secViagem').classList.contains('hidden');
@@ -499,6 +502,7 @@ $('btnSwitch').onclick = () => {
 $('heAutorizado').addEventListener('change', () => {
   const v = $('heAutorizado').value;
   $('heWarn').style.display = (v === 'NÃO') ? 'block' : 'none';
+  heValidate();
 });
 
 // ======= HORA EXTRA =======
@@ -516,13 +520,53 @@ function heCalc(){
   else if(minutos > 60) faixa = '>60';
 
   $('hePillMin').textContent = `Duração: ${minutos} min`;
+  const contabil = heMinContabilizados(minutos, $('heEscala').value, $('heTipo').value);
+  if(document.getElementById('hePillCont')) document.getElementById('hePillCont').textContent = `Contabilizado: ${contabil} min`;
   $('hePillFaixa').textContent = `Faixa: ${faixa}`;
   const ps = $('hePillStatus');
   if(minutos > 0){ ps.textContent='Pronto para enviar'; ps.className='pill ok'; $('heBtnEnviar').disabled=false; }
   else { ps.textContent='Aguardando dados'; ps.className='pill bad'; $('heBtnEnviar').disabled=true; }
-  return { minutos, faixa };
+  return { minutos, contabil, faixa };
 }
-['heData','heIni','heFim'].forEach(id => $(id).addEventListener('change', heCalc));
+
+function heAllFilled(){
+  const req = ['heColaborador','heEscala','heData','heTipo','heAcionado','heAutorizado','heIni','heFim','heJust'];
+  return req.every(id => {
+    const el = $(id);
+    if(!el) return false;
+    const v = (el.value || '').trim();
+    return v.length > 0;
+  });
+}
+
+function heValidate(){
+  const calc = heCalc();
+  const filled = heAllFilled();
+  // permite envio somente quando todos os campos estão preenchidos e a duração é válida (>0)
+  $('heBtnEnviar').disabled = !(filled && calc && calc.minutos > 0);
+}
+
+['heColaborador','heEscala','heData','heTipo','heAcionado','heAutorizado','heIni','heFim','heJust'].forEach(id => {
+  const el = $(id); if(!el) return;
+  el.addEventListener('change', heValidate);
+  el.addEventListener('input', heValidate);
+});
+
+
+
+// Regra de contabilização (5x2 + 100%: feriado/final de semana)
+function heMinContabilizados(minutos, escala, tipo){
+  const esc = String(escala||'').toLowerCase();
+  const tp = String(tipo||'').toLowerCase();
+  const is100 = (tp==='feriado' || tp==='final de semana');
+  if(esc==='5x2' && is100){
+    if(minutos <= 360) return minutos; // até 6h: integral (minutos reais)
+    const horasCheias = Math.floor(minutos/60);
+    if(horasCheias <= 6) return 360;   // entre 6:01 e 6:59 => 6h
+    return (horasCheias - 1) * 60;     // >=7h => desconta 1h e considera horas cheias
+  }
+  return minutos;
+}
 
 $('formHoraExtra').onsubmit = async (e) => {
   e.preventDefault();
@@ -567,6 +611,8 @@ $('formHoraExtra').onsubmit = async (e) => {
       $('colaborador').innerHTML = opts; $('consultaColab').innerHTML = opts; $('heColaborador').innerHTML = opts;
       watchVehicles();
  setMode('viagem');
+  // valida HE inicialmente
+  try{ heValidate(); }catch(e){}
     })();
   </script>
 </body>

@@ -193,6 +193,7 @@
             <div><label>STATUS</label><select id="dFiltroStatus" class="input"><option value="">Todos</option><option>Pendente</option><option>Aprovado</option><option>Reprovado</option></select></div>
             <div style="display:flex; gap:10px">
               <button class="btn btn-primary" id="btnAplicaDash" style="flex:1">Atualizar Gráficos</button>
+              <button class="btn btn-light" id="btnExportDash" title="Exportar Dados filtrados para Excel"><i class="fa-solid fa-file-excel"></i></button>
               <button class="btn btn-light" id="btnLimpaDash"><i class="fa-solid fa-rotate"></i></button>
             </div>
           </div>
@@ -217,7 +218,7 @@
               <button class="btn btn-primary" id="btnAplicaLanca" style="flex:1">Filtrar Lançamentos</button>
               <button class="btn btn-light" id="btnLimpaLanca"><i class="fa-solid fa-eraser"></i></button>
               <button class="btn btn-light" id="btnImprimir"><i class="fa-solid fa-print"></i></button>
-              <button class="btn btn-light" id="btnExport"><i class="fa-solid fa-file-excel"></i></button>
+              <button class="btn btn-light" id="btnExport" title="Exportar Lançamentos para Excel"><i class="fa-solid fa-file-excel"></i></button>
             </div>
           </div>
         </div>
@@ -260,6 +261,7 @@
             </div>
             <div style="display:flex; gap:10px">
               <button class="btn btn-primary" id="btnAplicaHE" style="flex:1">Atualizar</button>
+              <button class="btn btn-light" id="btnExportHE" title="Exportar Dados filtrados para Excel"><i class="fa-solid fa-file-excel"></i></button>
               <button class="btn btn-light" id="btnLimpaHE"><i class="fa-solid fa-rotate"></i></button>
             </div>
           </div>
@@ -277,7 +279,10 @@
       </section>
       <section id="tab-heLanca" style="display:none">
         <div class="card">
-          <h3><i class="fa-solid fa-list-check"></i> Lançamentos – Aprovar/Reprovar</h3>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px">
+            <h3 style="margin:0"><i class="fa-solid fa-list-check"></i> Lançamentos – Aprovar/Reprovar</h3>
+            <button class="btn btn-light" id="btnExportHEList" title="Exportar Lista de HE para Excel"><i class="fa-solid fa-file-excel"></i> Exportar Excel</button>
+          </div>
           <div id="heListaTbl" class="table-responsive"></div>
         </div>
       </section>
@@ -322,7 +327,6 @@
         userProfile.funcao = userProfile.funcao || userProfile.cargo || userProfile.role || 'gestor';
         $('userBox').textContent = userProfile.nome;
         $('userRole').textContent = userProfile.funcao;
-        if(String(userProfile.funcao||'').toLowerCase().includes('admin')) $('tabAdminLink').style.display = 'flex';
         initApp();
         setModo('viagem');
       } else {
@@ -453,6 +457,35 @@
       readFilterHE();
       renderHE();
     };
+
+    // EXPORTAÇÃO HE
+    function exportHE(data, name) {
+      if(!data.length) return showToast("Sem dados para exportar", false);
+      const rows = data.map(x => ({
+        "Número": x.numero || "-",
+        "Colaborador": x.colaborador || "-",
+        "Data": (x.data||'').split('-').reverse().join('/'),
+        "Tipo Escala": x.tipoEscala || "-",
+        "Tipo HE": x.tipoHoraExtra || "-",
+        "Acionado Por": x.acionadoPor || "-",
+        "Autorizado?": x.autorizadoSupervisor || "-",
+        "Início": x.horaInicio || "-",
+        "Fim": x.horaFim || "-",
+        "Duração (Min)": x.duracaoMinutos || 0,
+        "Faixa": x.faixaMinutos || "-",
+        "Status": x.status || "Pendente",
+        "Justificativa (Index)": x.justificativa || "-",
+        "Obs Auditoria": x.observacao || ""
+      }));
+      const ws = XLSX.utils.json_to_sheet(rows);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "HE");
+      XLSX.writeFile(wb, `${name}_${new Date().getTime()}.xlsx`);
+    }
+
+    $('btnExportHE').onclick = () => exportHE(runFilterHE(cacheHE), "Audit_HE_BI");
+    $('btnExportHEList').onclick = () => exportHE(cacheHE, "Audit_HE_Lista_Completa");
+
     function renderHE(){
       const d = runFilterHE(cacheHE);
       const aprov = d.filter(x => x.status === 'Aprovado');
@@ -506,7 +539,8 @@
           <td>${x.horaInicio||''} – ${x.horaFim||''}</td>
           <td style="font-weight:900">${x.duracaoMinutos||0} min</td>
           <td><span class="pill ${x.status==='Aprovado'?'ok':(x.status==='Reprovado'?'bad':'wait')}">${x.status||'Pendente'}</span></td>
-          <td style="font-size:10px; color:var(--text-muted); max-width:220px">${x.observacao||''}</td>
+          <td style="font-size:10px; color:var(--text-muted); max-width:180px"><i>${x.justificativa||'-'}</i></td>
+          <td style="font-size:10px; color:var(--danger); max-width:180px">${x.observacao||''}</td>
           <td>
             <div style="display:flex; gap:6px">
               <select class="input heChgStatus" data-id="${x._id}" style="padding:4px; font-size:10px; width:110px">
@@ -518,7 +552,7 @@
           </td>
         </tr>
       `).join('');
-      $('heListaTbl').innerHTML = `<table><thead><tr><th>Nº</th><th>Colab</th><th>Data</th><th>Tipo</th><th>Acionado</th><th>Autorizado?</th><th>Período</th><th>Min</th><th>Status</th><th>Obs</th><th>Ação</th></tr></thead><tbody>${rows || '<tr><td colspan="11">Vazio</td></tr>'}</tbody></table>`;
+      $('heListaTbl').innerHTML = `<table><thead><tr><th>Nº</th><th>Colab</th><th>Data</th><th>Tipo</th><th>Acionado</th><th>Autorizado?</th><th>Período</th><th>Min</th><th>Status</th><th>Justif. Index</th><th>Obs Auditoria</th><th>Ação</th></tr></thead><tbody>${rows || '<tr><td colspan="12">Vazio</td></tr>'}</tbody></table>`;
       document.querySelectorAll('.heChgStatus').forEach(s => {
         s.onchange = async () => {
           const id = s.dataset.id;
@@ -528,9 +562,10 @@
       });
     }
     function openEditHE(id){
+      const x = cacheHE.find(d => d._id === id);
       $('modalEdit').style.display = 'flex';
       $('editTitle').textContent = 'Motivo da Reprovação (HE)';
-      $('editBody').innerHTML = `<textarea id="heObs" class="input" style="height:120px" placeholder="Justificativa..."></textarea>`;
+      $('editBody').innerHTML = `<p style="font-size:11px">Justificativa Index: <b>${x.justificativa||'-'}</b></p><textarea id="heObs" class="input" style="height:120px" placeholder="Informe o motivo da reprovação..."></textarea>`;
       $('btnSaveEdit').onclick = async () => {
         const obs = $('heObs').value.trim();
         if(!obs) return;
@@ -595,7 +630,8 @@
           <td style="font-weight:700">${x.duracaoTexto || '-'}</td>
           <td style="font-weight:800">${brl(x.valor)}</td>
           <td><span class="pill ${x.status==='Aprovado'?'ok':(x.status==='Reprovado'?'bad':'wait')}">${x.status}</span></td>
-          <td style="font-size:10px; color:var(--text-muted); max-width:180px">${x.observacao || ''}</td>
+          <td style="font-size:10px; color:var(--text-muted); max-width:180px"><i>${x.justificativa || '-'}</i></td>
+          <td style="font-size:10px; color:var(--danger); max-width:180px">${x.observacao || ''}</td>
           <td>
             <div style="display:flex; gap:5px">
               <select class="input chgStatus" data-id="${x._id}" style="padding:4px; font-size:10px; width:90px">
@@ -609,7 +645,7 @@
           </td>
         </tr>
       `).join('');
-      $('tblLancaContainer').innerHTML = `<table><thead><tr><th>Nº</th><th>Colab</th><th>Destino</th><th>Veículo</th><th>Saída</th><th>Chegada</th><th>Duração</th><th>Valor</th><th>Status</th><th>Obs</th><th>Ação</th></tr></thead><tbody>${rows || '<tr><td colspan="11">Vazio.</td></tr>'}</tbody></table>`;
+      $('tblLancaContainer').innerHTML = `<table><thead><tr><th>Nº</th><th>Colab</th><th>Destino</th><th>Veículo</th><th>Saída</th><th>Chegada</th><th>Duração</th><th>Valor</th><th>Status</th><th>Justif. Index</th><th>Obs Auditoria</th><th>Ação</th></tr></thead><tbody>${rows || '<tr><td colspan="12">Vazio.</td></tr>'}</tbody></table>`;
       document.querySelectorAll('.chgStatus').forEach(s => { s.onchange = async () => { if(s.value==='Reprovado') openEditLanca(s.dataset.id, true); else await db.collection('solicitacoes_diaria').doc(s.dataset.id).update({status:s.value}); }; });
     }
     $('btnImprimir').onclick = () => {
@@ -620,12 +656,41 @@
       let total = 0;
       const htmlTable = d.map(x => {
         if(x.status === 'Aprovado') total += (x.valor || 0);
-        return `<tr><td>${x.numero}</td><td>${x.colaborador}</td><td>${x.destino}</td><td>${x.placa||'-'} / ${x.frota||'-'}</td><td>${(x.dataSaida||'').split('-').reverse().join('/')} ${x.horaSaida||''}</td><td>${x.dataRetorno?x.dataRetorno.split('-').reverse().join('/'):'-'} ${x.horaRetorno||''}</td><td>${x.duracaoTexto||'-'}</td><td>${brl(x.valor)}</td><td>${x.status}</td><td>${x.observacao||''}</td></tr>`;
+        return `<tr><td>${x.numero}</td><td>${x.colaborador}</td><td>${x.destino}</td><td>${x.placa||'-'} / ${x.frota||'-'}</td><td>${(x.dataSaida||'').split('-').reverse().join('/')} ${x.horaSaida||''}</td><td>${x.dataRetorno?x.dataRetorno.split('-').reverse().join('/'):'-'} ${x.horaRetorno||''}</td><td>${x.duracaoTexto||'-'}</td><td>${brl(x.valor)}</td><td>${x.status}</td><td>${x.justificativa||'-'}</td><td>${x.observacao||''}</td></tr>`;
       }).join('');
-      $('pContainer').innerHTML = `<table><thead><tr><th>Nº</th><th>Colab</th><th>Destino</th><th>Veículo</th><th>Saída</th><th>Chegada</th><th>Duração</th><th>Valor</th><th>Status</th><th>Obs</th></tr></thead><tbody>${htmlTable}</tbody></table>`;
+      $('pContainer').innerHTML = `<table><thead><tr><th>Nº</th><th>Colab</th><th>Destino</th><th>Veículo</th><th>Saída</th><th>Chegada</th><th>Duração</th><th>Valor</th><th>Status</th><th>Justif. Index</th><th>Obs Auditoria</th></tr></thead><tbody>${htmlTable}</tbody></table>`;
       $('pTotalValue').textContent = brl(total);
       setTimeout(() => { window.print(); }, 500);
     };
+
+    // EXPORTAÇÃO EXCEL VIAGENS
+    function exportToExcel(data, fileNamePrefix) {
+      if(!data.length) return showToast("Sem dados para exportar", false);
+      const rows = data.map(x => ({
+        "Nº Solicitação": x.numero,
+        "Colaborador": x.colaborador,
+        "Destino": x.destino,
+        "Placa": x.placa || "-",
+        "Nº Frota": x.frota || "-",
+        "Data Saída": (x.dataSaida||'').split('-').reverse().join('/'),
+        "Hora Saída": x.horaSaida || "-",
+        "Data Chegada": x.dataRetorno ? x.dataRetorno.split('-').reverse().join('/') : "-",
+        "Hora Chegada": x.horaRetorno || "-",
+        "Duração": x.duracaoTexto || "-",
+        "Valor (R$)": x.valor || 0,
+        "Status": x.status,
+        "Justificativa (Index)": x.justificativa || "-",
+        "Obs Auditoria": x.observacao || ""
+      }));
+      const ws = XLSX.utils.json_to_sheet(rows);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Dados AUDIT");
+      XLSX.writeFile(wb, `${fileNamePrefix}_${new Date().getTime()}.xlsx`);
+    }
+
+    $('btnExportDash').onclick = () => exportToExcel(runFilter(cacheSolic, filterD), "Audit_Dashboard");
+    $('btnExport').onclick = () => exportToExcel(runFilter(cacheSolic, filterL), "Audit_Lancamentos");
+
     function renderVeiculos() {
       const rows = cacheVeic.map(v => `<tr><td><b>${v._id}</b></td><td>${v.frota || '-'}</td><td><div style="display:flex;gap:5px"><button class="btn btn-primary" onclick="openEditVeic('${v._id}')" style="padding:6px"><i class="fa-solid fa-pen"></i></button><button class="btn btn-danger" onclick="askDelete('veic','${v._id}')" style="padding:6px"><i class="fa-solid fa-trash"></i></button></div></td></tr>`).join('');
       $('tblVeicContainer').innerHTML = `<table><thead><tr><th>Placa</th><th>Frota</th><th>Ação</th></tr></thead><tbody>${rows || '<tr><td colspan="3">Vazio</td></tr>'}</tbody></table>`;
@@ -666,10 +731,10 @@
       const x = cacheSolic.find(d => d._id === id);
       $('modalEdit').style.display = 'flex'; $('editTitle').textContent = reprove ? 'Motivo da Reprovação' : 'Editar #' + x.numero;
       if(reprove) {
-        $('editBody').innerHTML = `<textarea id="eObs" class="input" style="height:120px" placeholder="Justificativa..."></textarea>`;
+        $('editBody').innerHTML = `<p style="font-size:11px">Justificativa Index: <b>${x.justificativa||'-'}</b></p><textarea id="eObs" class="input" style="height:120px" placeholder="Informe o motivo da reprovação..."></textarea>`;
         $('btnSaveEdit').onclick = async () => { if(!$('eObs').value) return; await db.collection('solicitacoes_diaria').doc(id).update({ status:'Reprovado', observacao:$('eObs').value }); closeEdit(); };
       } else {
-        $('editBody').innerHTML = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div><label>DESTINO</label><input id="edD" class="input" value="${x.destino}"></div><div><label>VALOR</label><input id="edV" type="number" step="0.01" class="input" value="${x.valor}"></div></div><div><label>OBSERVAÇÃO</label><textarea id="edO" class="input" style="height:80px">${x.observacao||''}</textarea></div>`;
+        $('editBody').innerHTML = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div><label>DESTINO</label><input id="edD" class="input" value="${x.destino}"></div><div><label>VALOR</label><input id="edV" type="number" step="0.01" class="input" value="${x.valor}"></div></div><div><label>OBS AUDITORIA (ANOTAÇÃO)</label><textarea id="edO" class="input" style="height:80px">${x.observacao||''}</textarea></div>`;
         $('btnSaveEdit').onclick = async () => { await db.collection('solicitacoes_diaria').doc(id).update({ destino: $('edD').value, valor: parseFloat($('edV').value), observacao: $('edO').value }); closeEdit(); };
       }
     }
@@ -683,11 +748,7 @@
     function closeConfirm() { $('modalConfirm').style.display = 'none'; }
     function closeEdit() { $('modalEdit').style.display = 'none'; }
     $('btnDeleteConfirm').onclick = async () => { if(delType==='veic') await db.collection('veiculos').doc(delId).delete(); else await db.collection('solicitacoes_diaria').doc(delId).delete(); closeConfirm(); };
-    $('btnExport').onclick = () => {
-      const d = runFilter(cacheSolic, filterL).map(x => ({ Numero: x.numero, Colaborador: x.colaborador, Valor: x.valor, Status: x.status }));
-      const ws = XLSX.utils.json_to_sheet(d); const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Audit"); XLSX.writeFile(wb, `Export_${new Date().getTime()}.xlsx`);
-    };
+
     function showToast(msg, ok=true){ const t=$('toast'); if(!t) return; t.textContent=msg; t.classList.remove('error'); if(!ok) t.classList.add('error'); t.classList.add('show'); setTimeout(()=>{ t.classList.remove('show'); t.classList.remove('error'); }, 3000); }
     const recLink=$('recSenha'); const loginScreen=$('loginScreen'); const recoverScreen=$('recoverScreen'); const backBtn=$('btnBackLogin'); const sendBtn=$('btnSendReset');
     if(recLink){ recLink.onclick = ()=>{ loginScreen.style.display='none'; recoverScreen.style.display='flex'; }; }
@@ -697,3 +758,4 @@
   <div id="toast" class="toast"></div>
 </body>
 </html>
+
