@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AUDIT – Auditoria de Viagens</title>
+  <title>AUDIT – Viagens e Hora Extra</title>
 <link rel="icon" type="image/png" href="favicon.png">
   
   <!-- Fontes e Ícones -->
@@ -34,7 +34,7 @@
       line-height: 1.5;
     }
 
-    .container { max-width: 600px; margin: 0 auto; }
+    .container { max-width: 900px; margin: 0 auto; }
 
     /* ===== HEADER ===== */
     .header { text-align: center; margin-bottom: 24px; padding-top: 10px; }
@@ -112,7 +112,29 @@
       z-index: 1000; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     }
     .toast.show { opacity: 1; bottom: 30px; }
-  </style>
+  
+
+/* ===== MÓDULO (VIAGEM x HORA EXTRA) ===== */
+.chooser-bar{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 10px}
+.chooser-card{background:var(--bg-card);border:2px solid var(--border);border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:.2s;box-shadow:0 6px 14px rgba(2,6,23,.06)}
+.chooser-card:hover{transform:translateY(-1px)}
+.chooser-card.active{border-color:var(--primary);box-shadow:0 0 0 4px var(--primary-light)}
+.chooser-card i{font-size:22px;color:var(--primary)}
+.chooser-title{font-weight:900;font-size:14px}
+.chooser-desc{color:var(--text-muted);font-size:12px;margin-top:2px}
+.switch-top{display:flex;justify-content:flex-end;margin:6px 0 14px}
+.btn-switch{background:#fff;color:var(--primary);border:2px solid var(--primary);padding:8px 12px;border-radius:12px;font-weight:900;cursor:pointer;display:flex;align-items:center;gap:8px}
+.btn-switch:hover{background:var(--primary-light)}
+.hidden{display:none !important}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+@media (max-width: 720px){.grid-3{grid-template-columns:1fr 1fr}}
+@media (max-width: 560px){.grid-3{grid-template-columns:1fr}.chooser-bar{grid-template-columns:1fr}}
+
+/* ===== ALERTA HE (quando não autorizado) ===== */
+.warn-box{display:none; margin: 12px 0 0; padding: 12px 14px; border-radius: 14px; border: 1.5px solid #F59E0B; background: #FFFBEB; color:#92400E; font-weight:800; font-size:13px}
+.warn-box i{margin-right:8px}
+
+</style>
 </head>
 <body>
 
@@ -120,10 +142,30 @@
     <header class="header">
       <div class="brand-icon"><i class="fa-solid fa-route"></i></div>
       <h1>AUDIT</h1>
-      <p>Lançamento de Diária de Viagem</p>
+      <p>Escolha o tipo de lançamento</p>
     </header>
 
-    <div class="card">
+<div class="chooser-bar" id="chooserBar">
+  <div id="optViagem" class="chooser-card active" role="button" aria-pressed="true">
+    <i class="fa-solid fa-suitcase-rolling"></i>
+    <div>
+      <div class="chooser-title">LANÇAMENTO DE VIAGEM</div>
+      <div class="chooser-desc">Solicitação de diária (modelo atual)</div>
+    </div>
+  </div>
+  <div id="optHE" class="chooser-card" role="button" aria-pressed="false">
+    <i class="fa-solid fa-business-time"></i>
+    <div>
+      <div class="chooser-title">LANÇAMENTO DE HORA EXTRA</div>
+      <div class="chooser-desc">Controle de HE com justificativa</div>
+    </div>
+  </div>
+</div>
+<div class="switch-top"><button id="btnSwitch" class="btn-switch" type="button"><i class="fa-solid fa-repeat"></i> Alternar para Hora Extra</button></div>
+
+
+    <section id="secViagem">
+<div class="card">
       <div class="card-header"><i class="fa-solid fa-plus-circle"></i> Nova Solicitação</div>
       <div class="card-body">
         <form id="formSolicitacao">
@@ -212,7 +254,103 @@
     </div>
   </div>
 
-  <div id="toast" class="toast"></div>
+  
+</section>
+
+<section id="secHE" class="hidden" aria-hidden="true">
+  <div class="card">
+    <div class="card-header"><i class="fa-solid fa-business-time"></i> Lançamento de Hora Extra</div>
+    <div class="card-body">
+      <form id="formHoraExtra">
+        <div class="form-group">
+          <label class="label">Nome do colaborador</label>
+          <div class="input-wrapper"><i class="fa-solid fa-user"></i><select id="heColaborador" class="input" required></select></div>
+        </div>
+
+        <div class="grid-3">
+          <div class="form-group">
+            <label class="label">Tipo de escala</label>
+            <div class="input-wrapper"><i class="fa-solid fa-people-arrows"></i>
+              <select id="heEscala" class="input" required>
+                <option value="" disabled selected>Selecione</option>
+                <option>6X3</option>
+                <option>5x2</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="label">Data</label>
+            <div class="input-wrapper"><i class="fa-solid fa-calendar"></i><input id="heData" type="date" class="input" required></div>
+          </div>
+          <div class="form-group">
+            <label class="label">Tipo de hora extra</label>
+            <div class="input-wrapper"><i class="fa-solid fa-tags"></i>
+              <select id="heTipo" class="input" required>
+                <option value="" disabled selected>Selecione</option>
+                <option>feriado</option>
+                <option>final de semana</option>
+                <option>folga do meio</option>
+                <option>dia de turno</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-3">
+          <div class="form-group">
+            <label class="label">Acionado por</label>
+            <div class="input-wrapper"><i class="fa-solid fa-user-check"></i>
+              <select id="heAcionado" class="input" required>
+                <option value="" disabled selected>Selecione</option>
+                <option>EDINALDO</option>
+                <option>MARCOS</option>
+                <option>THIAGO</option>
+                <option>CAMILA</option>
+                <option>FARAH</option>
+                <option>WANDERSON</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="label">Autorizado pelo supervisor?</label>
+            <div class="input-wrapper"><i class="fa-solid fa-user-shield"></i>
+              <select id="heAutorizado" class="input" required>
+                <option value="" disabled selected>Selecione</option>
+                <option>SIM</option>
+                <option>NÃO</option>
+              </select>
+            </div>
+            <div id="heWarn" class="warn-box"><i class="fa-solid fa-triangle-exclamation"></i>ATENÇÃO! A REALIZAÇÃO DE HORA EXTRA SÓ É PERMITIDA COM AUTORIZAÇÃO DO SUPERVISOR DA UNIDADE!</div>
+          </div>
+          <div class="form-group">
+            <label class="label">Período da hora extra</label>
+            <div class="grid-2">
+              <div class="input-wrapper"><i class="fa-solid fa-clock"></i><input id="heIni" type="time" class="input" required></div>
+              <div class="input-wrapper"><i class="fa-solid fa-clock"></i><input id="heFim" type="time" class="input" required></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="label">Justificativa</label>
+          <div class="input-wrapper"><i class="fa-solid fa-comment"></i><textarea id="heJust" class="input" rows="3" placeholder="Descreva o motivo da HE" required></textarea></div>
+        </div>
+
+        <div class="elig-box">
+          <div class="elig-title"><span>Resumo</span><span id="hePillStatus" class="pill bad">Aguardando dados</span></div>
+          <div class="pill-group">
+            <span id="hePillMin" class="pill">Duração: -- min</span>
+            <span id="hePillFaixa" class="pill">Faixa: -</span>
+          </div>
+        </div>
+
+        <button id="heBtnEnviar" class="btn btn-primary" style="margin-top: 20px;" disabled><i class="fa-solid fa-paper-plane"></i> Enviar Lançamento</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<div id="toast" class="toast"></div>
 
   <!-- FIREBASE SCRIPTS -->
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
@@ -338,11 +476,97 @@
       $('resultado').innerHTML = snap.empty ? "Sem registros." : snap.docs.map(d => renderCard(d.data())).join('');
     };
 
-    // Inits
+    
+
+// ======= MODO (VIAGEM x HORA EXTRA) =======
+function setMode(mode){
+  const isV = mode === 'viagem';
+  $('optViagem').classList.toggle('active', isV);
+  $('optHE').classList.toggle('active', !isV);
+  $('secViagem').classList.toggle('hidden', !isV);
+  $('secHE').classList.toggle('hidden', isV);
+  $('secHE').setAttribute('aria-hidden', isV ? 'true' : 'false');
+  $('btnSwitch').innerHTML = isV ? '<i class="fa-solid fa-repeat"></i> Alternar para Hora Extra' : '<i class="fa-solid fa-repeat"></i> Alternar para Viagem';
+}
+$('optViagem').onclick = () => setMode('viagem');
+$('optHE').onclick = () => setMode('he');
+$('btnSwitch').onclick = () => {
+  const showingV = !$('secViagem').classList.contains('hidden');
+  setMode(showingV ? 'he' : 'viagem');
+};
+
+// ======= ALERTA: AUTORIZADO = NÃO (permite envio) =======
+$('heAutorizado').addEventListener('change', () => {
+  const v = $('heAutorizado').value;
+  $('heWarn').style.display = (v === 'NÃO') ? 'block' : 'none';
+});
+
+// ======= HORA EXTRA =======
+function heCalc(){
+  const d = $('heData').value, hi = $('heIni').value, hf = $('heFim').value;
+  if(!d || !hi || !hf){ $('heBtnEnviar').disabled = true; return null; }
+  let start = new Date(`${d}T${hi}`);
+  let end = new Date(`${d}T${hf}`);
+  if(end <= start) end = new Date(end.getTime() + 24*60*60*1000);
+  const minutos = Math.max(0, Math.floor((end-start)/60000));
+  let faixa = '-';
+  if(minutos >= 10 && minutos <= 15) faixa = '10-15';
+  else if(minutos >= 16 && minutos <= 30) faixa = '16-30';
+  else if(minutos >= 31 && minutos <= 60) faixa = '31-60';
+  else if(minutos > 60) faixa = '>60';
+
+  $('hePillMin').textContent = `Duração: ${minutos} min`;
+  $('hePillFaixa').textContent = `Faixa: ${faixa}`;
+  const ps = $('hePillStatus');
+  if(minutos > 0){ ps.textContent='Pronto para enviar'; ps.className='pill ok'; $('heBtnEnviar').disabled=false; }
+  else { ps.textContent='Aguardando dados'; ps.className='pill bad'; $('heBtnEnviar').disabled=true; }
+  return { minutos, faixa };
+}
+['heData','heIni','heFim'].forEach(id => $(id).addEventListener('change', heCalc));
+
+$('formHoraExtra').onsubmit = async (e) => {
+  e.preventDefault();
+  const calc = heCalc();
+  if(!calc) return;
+  const num = Math.floor(100000 + Math.random() * 900000);
+  const doc = {
+    numero: num,
+    colaborador: $('heColaborador').value,
+    tipoEscala: $('heEscala').value,
+    data: $('heData').value,
+    tipoHoraExtra: $('heTipo').value,
+    acionadoPor: $('heAcionado').value,
+    autorizadoSupervisor: $('heAutorizado').value,
+    horaInicio: $('heIni').value,
+    horaFim: $('heFim').value,
+    justificativa: $('heJust').value,
+    duracaoMinutos: calc.minutos,
+    faixaMinutos: calc.faixa,
+    status: 'Pendente',
+    observacao: '',
+    createdAt: new Date().toISOString()
+  };
+  try{
+    await db.collection('solicitacoes_hora_extra').add(doc);
+    toast(`HE #${num} enviada!`, 'success');
+    e.target.reset();
+    $('heWarn').style.display = 'none';
+    $('hePillStatus').textContent='Aguardando dados'; $('hePillStatus').className='pill bad';
+    $('hePillMin').textContent='Duração: -- min'; $('hePillFaixa').textContent='Faixa: -';
+    $('heBtnEnviar').disabled=true;
+  } catch(err){
+    console.error(err);
+    toast('Erro ao enviar HE.', 'error');
+  }
+};
+
+
+// Inits
     (function init() {
       const opts = ['<option value="" disabled selected>Escolha o colaborador</option>'].concat(COLABS.map(c => `<option value="${c}">${c}</option>`)).join('');
-      $('colaborador').innerHTML = opts; $('consultaColab').innerHTML = opts;
+      $('colaborador').innerHTML = opts; $('consultaColab').innerHTML = opts; $('heColaborador').innerHTML = opts;
       watchVehicles();
+ setMode('viagem');
     })();
   </script>
 </body>
