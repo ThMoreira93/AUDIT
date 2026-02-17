@@ -97,9 +97,9 @@
     .mode-switch .btn-switch{background:#fff;color:var(--primary);border:2px solid var(--primary);padding:8px 12px;border-radius:12px;font-weight:900;cursor:pointer;display:flex;align-items:center;gap:8px}
     .mode-switch .btn-switch:hover{background:var(--primary-light)}
     .hidden{display:none !important}
-    #tab-heDash .he-filter-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));gap:14px;align-items:end}
-    #tab-heDash label{display:block;font-size:11px;font-weight:800;color:var(--text-muted);text-transform:uppercase;margin-bottom:6px}
-    #tab-heDash .input{height:42px;border-radius:12px}
+    .he-filter-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));gap:14px;align-items:end}
+    .he-filter-grid label{display:block;font-size:11px;font-weight:800;color:var(--text-muted);text-transform:uppercase;margin-bottom:6px}
+    .he-filter-grid .input{height:42px;border-radius:12px}
     #tab-heDash select[multiple]{height:100px !important;padding:10px 12px;border-radius:12px}
   </style>
 </head>
@@ -116,21 +116,7 @@
       <h3 style="font-size:14px">Soma Total Aprovada: <span id="pTotalValue">R$ 0,00</span></h3>
     </div>
   </div>
-  <div id="recoverScreen" class="login-screen" style="display:none">
-    <div class="login-card">
-      <div style="text-align:center; margin-bottom:20px">
-        <h2 style="margin:0; font-weight:800">Recuperar senha</h2>
-        <p style="color:#64748B; font-size:13px">Informe seu e-mail corporativo para receber o link.</p>
-      </div>
-      <div style="display:grid; gap:18px">
-        <input id="recEmail" class="input" placeholder="E-mail corporativo"/>
-        <div style="display:flex; gap:10px; justify-content:space-between">
-          <button id="btnBackLogin" class="btn btn-light" style="flex:1"><i class="fa-solid fa-arrow-left"></i> Voltar</button>
-          <button id="btnSendReset" type="button" class="btn btn-primary" style="flex:1; background:#7C3AED"><i class="fa-solid fa-paper-plane"></i> Enviar link</button>
-        </div>
-      </div>
-    </div>
-  </div>
+
   <div id="loginScreen" class="login-screen">
     <div class="login-card">
       <div style="text-align:center; margin-bottom:30px">
@@ -147,6 +133,7 @@
       </div>
     </div>
   </div>
+
   <div id="appShell" style="display:none">
     <header class="top-bar">
       <div class="brand"><div class="logo"><i class="fa-solid fa-route"></i></div> <span>AUDIT</span></div>
@@ -166,24 +153,21 @@
         <button id="btnLogout" class="btn-logout"><i class="fa-solid fa-power-off"></i></button>
       </div>
     </header>
+
     <main class="app-content">
       <div class="mode-bar" id="modeBar">
-        <div class="mode-card active" id="mViagem" role="button" aria-pressed="true">
+        <div class="mode-card active" id="mViagem" role="button">
           <i class="fa-solid fa-route"></i>
-          <div>
-            <div class="mode-title">AUDITORIA DE VIAGENS</div>
-            <div class="mode-desc">Dashboard, lançamentos, massa e veículos</div>
-          </div>
+          <div><div class="mode-title">AUDITORIA DE VIAGENS</div><div class="mode-desc">Dashboard, lançamentos, massa e veículos</div></div>
         </div>
-        <div class="mode-card" id="mHE" role="button" aria-pressed="false">
+        <div class="mode-card" id="mHE" role="button">
           <i class="fa-solid fa-business-time"></i>
-          <div>
-            <div class="mode-title">CONTROLE DE HORA EXTRA</div>
-            <div class="mode-desc">Aprovação + BI de HE</div>
-          </div>
+          <div><div class="mode-title">CONTROLE DE HORA EXTRA</div><div class="mode-desc">Aprovação + BI de HE</div></div>
         </div>
       </div>
-      <div class="mode-switch"><button class="btn-switch" id="btnModeSwitch" type="button"><i class="fa-solid fa-repeat"></i> Alternar para Hora Extra</button></div>
+      <div class="mode-switch"><button class="btn-switch" id="btnModeSwitch" type="button"><i class="fa-solid fa-repeat"></i> Alternar Módulo</button></div>
+
+      <!-- SEÇÃO VIAGENS -->
       <section id="tab-dash">
         <div class="card">
           <h3><i class="fa-solid fa-filter"></i> Filtros Dashboard (BI)</h3>
@@ -193,7 +177,7 @@
             <div><label>STATUS</label><select id="dFiltroStatus" class="input"><option value="">Todos</option><option>Pendente</option><option>Aprovado</option><option>Reprovado</option></select></div>
             <div style="display:flex; gap:10px">
               <button class="btn btn-primary" id="btnAplicaDash" style="flex:1">Atualizar Gráficos</button>
-              <button class="btn btn-light" id="btnExportDash" title="Exportar Dados filtrados para Excel"><i class="fa-solid fa-file-excel"></i></button>
+              <button class="btn btn-light" id="btnExportDash" title="Excel"><i class="fa-solid fa-file-excel"></i></button>
               <button class="btn btn-light" id="btnLimpaDash"><i class="fa-solid fa-rotate"></i></button>
             </div>
           </div>
@@ -208,9 +192,10 @@
         <div class="card"><h3>Top 10 Colaboradores (R$)</h3><div style="height:100px"><canvas id="chTop"></canvas></div></div>
         <div class="card"><h3>Ranking Completo Aprovados</h3><div id="tblRankContainer" class="table-responsive"></div></div>
       </section>
+
       <section id="tab-lanca" style="display:none">
         <div class="card">
-          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:15px; align-items:end">
+          <div class="he-filter-grid">
             <div><label>DATA INICIAL</label><input type="date" class="input" id="lFiltroIni"></div>
             <div><label>DATA FINAL</label><input type="date" class="input" id="lFiltroFim"></div>
             <div><label>COLABORADOR</label><select id="lFiltroColab" class="input"><option value="">Todos</option></select></div>
@@ -218,29 +203,14 @@
               <button class="btn btn-primary" id="btnAplicaLanca" style="flex:1">Filtrar Lançamentos</button>
               <button class="btn btn-light" id="btnLimpaLanca"><i class="fa-solid fa-eraser"></i></button>
               <button class="btn btn-light" id="btnImprimir"><i class="fa-solid fa-print"></i></button>
-              <button class="btn btn-light" id="btnExport" title="Exportar Lançamentos para Excel"><i class="fa-solid fa-file-excel"></i></button>
+              <button class="btn btn-light" id="btnExport" title="Excel"><i class="fa-solid fa-file-excel"></i></button>
             </div>
           </div>
         </div>
         <div class="card"><div id="tblLancaContainer" class="table-responsive"></div></div>
       </section>
-      <section id="tab-mass" style="display:none">
-        <div class="card" style="text-align:center; padding:80px">
-          <i class="fa-solid fa-bolt fa-4x" style="color:var(--primary); margin-bottom:20px"></i>
-          <h2>Ação em Massa</h2>
-          <button class="btn btn-primary" onclick="openSpreadsheet('mass')">Abrir Planilha de Status</button>
-        </div>
-      </section>
-      <section id="tab-veic" style="display:none">
-        <div style="display:grid; grid-template-columns: 1fr 2.5fr; gap:25px">
-          <div class="card" style="text-align:center">
-            <i class="fa-solid fa-car fa-3x" style="color:var(--primary); margin-bottom:15px"></i>
-            <h3>Gestão de Frota</h3>
-            <button class="btn btn-primary" style="width:100%" onclick="openSpreadsheet('veic')">Abrir Planilha de Veículos</button>
-          </div>
-          <div class="card"><div id="tblVeicContainer" class="table-responsive"></div></div>
-        </div>
-      </section>
+
+      <!-- SEÇÃO HORA EXTRA -->
       <section id="tab-heDash" style="display:none">
         <div class="card">
           <h3><i class="fa-solid fa-filter"></i> Filtros – Hora Extra</h3>
@@ -260,53 +230,77 @@
               </div>
             </div>
             <div style="display:flex; gap:10px">
-              <button class="btn btn-primary" id="btnAplicaHE" style="flex:1">Atualizar</button>
-              <button class="btn btn-light" id="btnExportHE" title="Exportar Dados filtrados para Excel"><i class="fa-solid fa-file-excel"></i></button>
+              <button class="btn btn-primary" id="btnAplicaHE" style="flex:1">Atualizar Gráficos</button>
+              <button class="btn btn-light" id="btnExportHE" title="Excel"><i class="fa-solid fa-file-excel"></i></button>
               <button class="btn btn-light" id="btnLimpaHE"><i class="fa-solid fa-rotate"></i></button>
             </div>
           </div>
         </div>
         <div class="kpi-grid">
           <div class="kpi-card"><span class="kpi-label">Total de Solicitações HE</span><span class="kpi-value" id="kheTotal">0</span></div>
-          <div class="kpi-card" style="border-left: 4px solid var(--success)"><span class="kpi-label">Horas Aprovadas (Min)</span><span class="kpi-value" id="kheAprov" style="color:var(--success)">0</span></div>
+          <div class="kpi-card" style="border-left: 4px solid var(--success)"><span class="kpi-label">Horas Totais</span><span class="kpi-value" id="kheAprov" style="color:var(--success)">0h 00m</span></div>
           <div class="kpi-card" style="border-left: 4px solid var(--warning)"><span class="kpi-label">Solicitações Pendentes</span><span class="kpi-value" id="khePend" style="color:var(--warning)">0</span></div>
         </div>
         <div style="display:grid; grid-template-columns: 1.3fr 1fr 1fr; gap:20px">
-          <div class="card"><h3><i class="fa-solid fa-ranking-star"></i> Ranking de Horas (Minutos)</h3><div id="heRankTbl" class="table-responsive"></div></div>
+          <div class="card"><h3><i class="fa-solid fa-ranking-star"></i> Ranking de Horas</h3><div id="heRankTbl" class="table-responsive"></div></div>
           <div class="card"><h3><i class="fa-solid fa-chart-pie"></i>Tipo de HE</h3><div style="height:260px"><canvas id="heChartTipo"></canvas></div></div>
           <div class="card"><h3><i class="fa-solid fa-chart-pie"></i>Faixas</h3><div style="height:260px"><canvas id="heChartFaixa"></canvas></div></div>
         </div>
       </section>
+
       <section id="tab-heLanca" style="display:none">
         <div class="card">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px">
-            <h3 style="margin:0"><i class="fa-solid fa-list-check"></i> Lançamentos – Aprovar/Reprovar</h3>
-            <button class="btn btn-light" id="btnExportHEList" title="Exportar Lista de HE para Excel"><i class="fa-solid fa-file-excel"></i> Exportar Excel</button>
+          <h3><i class="fa-solid fa-filter"></i> Filtros – Lançamentos HE</h3>
+          <div class="he-filter-grid">
+            <div><label>COLABORADOR</label><select id="heLFiltroColab" class="input"><option value="">Todos</option></select></div>
+            <div><label>DATA INICIAL</label><input type="date" class="input" id="heLFiltroIni"></div>
+            <div><label>DATA FINAL</label><input type="date" class="input" id="heLFiltroFim"></div>
+            <div><label>STATUS</label><select id="heLFiltroStatus" class="input"><option value="">Todos</option><option>Pendente</option><option>Aprovado</option><option>Reprovado</option></select></div>
+            <div><label>ACIONADO POR</label><select id="heLFiltroAcionado" class="input"><option value="">Todos</option><option>EDINALDO</option><option>MARCOS</option><option>THIAGO</option><option>CAMILA</option><option>FARAH</option><option>WANDERSON</option></select></div>
+            <div><label>AUTORIZADO?</label><select id="heLFiltroAutorizado" class="input"><option value="">Todos</option><option>SIM</option><option>NÃO</option></select></div>
+            <div style="display:flex; gap:10px">
+              <button class="btn btn-primary" id="btnAplicaHEList" style="flex:1">Filtrar</button>
+              <button class="btn btn-light" id="btnLimpaHEList"><i class="fa-solid fa-eraser"></i></button>
+              <button class="btn btn-light" id="btnExportHEList" title="Excel"><i class="fa-solid fa-file-excel"></i></button>
+            </div>
           </div>
-          <div id="heListaTbl" class="table-responsive"></div>
+        </div>
+        <div class="card"><div id="heListaTbl" class="table-responsive"></div></div>
+      </section>
+
+      <!-- GESTÃO EM MASSA / VEÍCULOS -->
+      <section id="tab-mass" style="display:none">
+        <div class="card" style="text-align:center; padding:80px">
+          <i class="fa-solid fa-bolt fa-4x" style="color:var(--primary); margin-bottom:20px"></i>
+          <h2>Ação em Massa</h2>
+          <button class="btn btn-primary" onclick="openSpreadsheet('mass')">Abrir Planilha de Status</button>
+        </div>
+      </section>
+      <section id="tab-veic" style="display:none">
+        <div style="display:grid; grid-template-columns: 1fr 2.5fr; gap:25px">
+          <div class="card" style="text-align:center">
+            <i class="fa-solid fa-car fa-3x" style="color:var(--primary); margin-bottom:15px"></i>
+            <h3>Gestão de Frota</h3>
+            <button class="btn btn-primary" style="width:100%" onclick="openSpreadsheet('veic')">Abrir Planilha de Veículos</button>
+          </div>
+          <div class="card"><div id="tblVeicContainer" class="table-responsive"></div></div>
         </div>
       </section>
     </main>
   </div>
-  <div id="modalSheet" class="modal-overlay">
-    <div class="modal-content">
-      <div style="display:flex; justify-content:space-between; align-items:center">
-        <div><h2 id="sheetTitle" style="margin:0">Planilha de Importação</h2><p style="font-size:12px; color:var(--text-muted); margin-top:5px">Pressione <b>Ctrl+V</b> na primeira célula branca para colar do Excel.</p></div>
-        <button class="btn-light" onclick="closeSpreadsheet()"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <div class="spreadsheet-wrap"><table class="sheet-table" id="mainSheet"><thead id="sheetHead"></thead><tbody id="sheetBody"></tbody></table></div>
-      <div style="display:flex; justify-content:space-between; align-items:center"><button class="btn btn-light" onclick="addRows(50)">+ 50 Linhas</button><div style="display:flex; gap:10px"><button class="btn btn-light" onclick="closeSpreadsheet()">Cancelar</button><button class="btn btn-primary" id="btnSaveSheet">Salvar Dados</button></div></div>
-    </div>
-  </div>
+
   <div id="modalEdit" class="modal-overlay">
     <div class="modal-content" style="max-width:600px"><h2 id="editTitle">Editar Registro</h2><div id="editBody" style="display:grid; gap:15px; margin-top:15px"></div><div style="margin-top:25px; display:flex; gap:10px; justify-content:flex-end"><button class="btn btn-light" onclick="closeEdit()">Fechar</button><button class="btn btn-primary" id="btnSaveEdit">Gravar</button></div></div>
   </div>
+
   <div id="modalConfirm" class="modal-overlay">
-    <div class="modal-content" style="max-width:400px; text-align:center"><div style="color:var(--danger); font-size:40px; margin-bottom:15px"><i class="fa-solid fa-triangle-exclamation"></i></div><h3 id="confirmTitle">Confirmar?</h3><p id="confirmMsg"></p><div style="margin-top:25px; display:flex; gap:10px; justify-content:center"><button class="btn btn-light" onclick="closeConfirm()">Cancelar</button><button class="btn btn-danger" id="btnDeleteConfirm">Sim, Excluir</button></div></div>
+    <div class="modal-content" style="max-width:400px; text-align:center"><i class="fa-solid fa-triangle-exclamation fa-4x" style="color:var(--danger)"></i><h3 id="confirmTitle">Confirmar?</h3><p id="confirmMsg"></p><div style="margin-top:25px; display:flex; gap:10px; justify-content:center"><button class="btn btn-light" onclick="closeConfirm()">Cancelar</button><button class="btn btn-danger" id="btnDeleteConfirm">Sim, Excluir</button></div></div>
   </div>
+
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+  
   <script>
     const firebaseConfig = {"apiKey":"AIzaSyBMtXm9wInJb9xrBFU5gyEIMKuWuVzknSU","authDomain":"deslocamento-3bcd0.firebaseapp.com","projectId":"deslocamento-3bcd0","storageBucket":"deslocamento-3bcd0.firebasestorage.app","messagingSenderId":"1041622437635","appId":"1:1041622437635:web:9a0e8b026879919676e336","measurementId":"G-JKWV37MFHB"};
     firebase.initializeApp(firebaseConfig);
@@ -314,19 +308,22 @@
     const db = firebase.firestore();
     const $ = (id) => document.getElementById(id);
     Chart.register(ChartDataLabels);
-    let cacheSolic = [], cacheVeic = [], cacheHE = [], userProfile = null, unsubSolic = null, unsubVeic = null, unsubHE = null;
+
+    let cacheSolic = [], cacheVeic = [], cacheHE = [], userProfile = null;
+    let unsubSolic = null, unsubVeic = null, unsubHE = null;
     let filterD = { ini: null, fim: null, status: '' };
     let filterL = { ini: null, fim: null, colab: '' };
     let filterHE = { ini: null, fim: null, tipos: [], acionado: '', autorizado: '', status:'', r10:true, r16:true, r31:true };
+    let filterHEList = { ini: null, fim: null, colab: '', status: '', acionado: '', autorizado: '' };
+
     auth.onAuthStateChanged(async (user) => {
       if(user) {
         $('loginScreen').style.display = 'none';
         $('appShell').style.display = 'block';
         const doc = await db.collection('usuarios').doc(user.uid).get();
         userProfile = doc.exists ? doc.data() : { nome: user.email, cargo: 'gestor' };
-        userProfile.funcao = userProfile.funcao || userProfile.cargo || userProfile.role || 'gestor';
         $('userBox').textContent = userProfile.nome;
-        $('userRole').textContent = userProfile.funcao;
+        $('userRole').textContent = userProfile.funcao || userProfile.cargo || 'GESTOR';
         initApp();
         setModo('viagem');
       } else {
@@ -334,15 +331,15 @@
         $('appShell').style.display = 'none';
       }
     });
+
     $('btnLogin').onclick = async () => {
       const e = $('email').value, s = $('senha').value;
-      if(!e || !s) return;
       try { await auth.signInWithEmailAndPassword(e, s); } catch(err) { $('loginMsg').textContent = "Acesso negado."; }
     };
     $('btnLogout').onclick = () => auth.signOut();
+
     function initApp() {
-      const navLinks = document.querySelectorAll('#nav a');
-      navLinks.forEach(t => {
+      document.querySelectorAll('#nav a').forEach(t => {
         t.onclick = (e) => {
           e.preventDefault();
           document.querySelectorAll('#nav a').forEach(x => x.classList.remove('active'));
@@ -364,24 +361,19 @@
       if(unsubHE) unsubHE();
       unsubHE = db.collection('solicitacoes_hora_extra').onSnapshot(snap => {
         cacheHE = snap.docs.map(d => ({ _id: d.id, ...d.data() }));
-        cacheHE.sort((a,b)=>{
-          const ta = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-          const tb = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-          return tb - ta;
-        });
-        renderHE();
-        renderHELista();
+        cacheHE.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
+        populateHEFilters(); renderHE(); renderHELista();
       });
     }
+
     function brl(v) { return Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
-    function populateFilters() {
-      const nomes = [...new Set(cacheSolic.map(d => d.colaborador).filter(Boolean))].sort();
-      const sel = $('lFiltroColab');
-      const cur = sel.value;
-      sel.innerHTML = '<option value="">Todos os Colaboradores</option>';
-      nomes.forEach(n => { sel.innerHTML += `<option value="${n}">${n}</option>`; });
-      sel.value = cur;
+
+    function formatHours(min) {
+        const h = Math.floor(min / 60);
+        const m = min % 60;
+        return `${h}h ${m.toString().padStart(2, '0')}m`;
     }
+
     function runFilter(data, f) {
       return data.filter(x => {
         if(f.status && x.status !== f.status) return false;
@@ -389,201 +381,46 @@
         if(f.ini || f.fim) {
           let recordDate = x.createdAt ? new Date(x.createdAt) : new Date(x.dataSaida + "T12:00:00");
           recordDate.setHours(0,0,0,0);
-          const recordTime = recordDate.getTime();
-          if(f.ini) {
-            const startTime = new Date(f.ini + "T00:00:00").getTime();
-            if(recordTime < startTime) return false;
-          }
-          if(f.fim) {
-            const endTime = new Date(f.fim + "T00:00:00").getTime();
-            if(recordTime > endTime) return false;
-          }
+          if(f.ini && recordDate.getTime() < new Date(f.ini + "T00:00:00").getTime()) return false;
+          if(f.fim && recordDate.getTime() > new Date(f.fim + "T23:59:59").getTime()) return false;
         }
         return true;
       });
     }
-    function setModo(m){
-      const isV = m === 'viagem';
-      $('mViagem').classList.toggle('active', isV);
-      $('mHE').classList.toggle('active', !isV);
-      const navs = Array.from(document.querySelectorAll('#nav a'));
-      navs.forEach(a => {
-        const t = a.dataset.tab;
-        if(['dash','lanca','mass','veic','admin'].includes(t)) a.style.display = isV ? 'flex' : 'none';
-        if(['heDash','heLanca'].includes(t)) a.style.display = isV ? 'none' : 'flex';
-      });
-      $('btnModeSwitch').innerHTML = isV ? '<i class="fa-solid fa-repeat"></i> Alternar para Hora Extra' : '<i class="fa-solid fa-repeat"></i> Alternar para Viagens';
-      const target = isV ? document.querySelector('#nav a[data-tab="dash"]') : document.querySelector('#nav a[data-tab="heDash"]');
-      if(target) target.click();
-    }
-    $('btnModeSwitch').onclick = () => {
-      const isViagem = $('mViagem').classList.contains('active');
-      setModo(isViagem ? 'he' : 'viagem');
-    };
-    function readFilterHE(){
-      filterHE.ini = $('heFiltroIni').value;
-      filterHE.fim = $('heFiltroFim').value;
-      filterHE.tipos = Array.from($('heFiltroTipo').selectedOptions).map(o=>o.value);
-      filterHE.acionado = $('heFiltroAcionado').value;
-      filterHE.autorizado = $('heFiltroAutorizado').value;
-      filterHE.status = $('heFiltroStatus').value;
-      filterHE.r10 = $('heR10').checked;
-      filterHE.r16 = $('heR16').checked;
-      filterHE.r31 = $('heR31').checked;
-    }
-    function runFilterHE(data){
+
+    function runFilterHE(data, f) {
       return data.filter(x=>{
-        if(filterHE.ini || filterHE.fim){
+        if(f.ini || f.fim){
           const t = new Date((x.data||'') + 'T00:00:00').getTime();
-          if(filterHE.ini){ const s = new Date(filterHE.ini+'T00:00:00').getTime(); if(t < s) return false; }
-          if(filterHE.fim){ const e = new Date(filterHE.fim+'T23:59:59').getTime(); if(t > e) return false; }
+          if(f.ini && t < new Date(f.ini+'T00:00:00').getTime()) return false;
+          if(f.fim && t > new Date(f.fim+'T23:59:59').getTime()) return false;
         }
-        if(filterHE.tipos.length && !filterHE.tipos.includes(x.tipoHoraExtra)) return false;
-        if(filterHE.acionado && x.acionadoPor !== filterHE.acionado) return false;
-        if(filterHE.autorizado && (x.autorizadoSupervisor||'').toUpperCase() !== filterHE.autorizado) return false;
-        if(filterHE.status && (x.status||'Pendente') !== filterHE.status) return false;
-        const faixa = x.faixaMinutos;
-        if(faixa==='10-15' && !filterHE.r10) return false;
-        if(faixa==='16-30' && !filterHE.r16) return false;
-        if(faixa==='31-60' && !filterHE.r31) return false;
+        if(f.tipos && f.tipos.length && !f.tipos.includes(x.tipoHoraExtra)) return false;
+        if(f.acionado && x.acionadoPor !== f.acionado) return false;
+        if(f.autorizado && (x.autorizadoSupervisor||'').toUpperCase() !== f.autorizado) return false;
+        if(f.status && (x.status||'Pendente') !== f.status) return false;
+        if(x.faixaMinutos==='10-15' && !f.r10) return false;
+        if(x.faixaMinutos==='16-30' && !f.r16) return false;
+        if(x.faixaMinutos==='31-60' && !f.r31) return false;
         return true;
       });
     }
-    $('btnAplicaHE').onclick = () => { readFilterHE(); renderHE(); };
-    $('btnLimpaHE').onclick = () => {
-      ['heFiltroIni','heFiltroFim','heFiltroAcionado','heFiltroStatus','heFiltroAutorizado'].forEach(id => $(id).value='');
-      const sel = $('heFiltroTipo'); for(let i=0;i<sel.options.length;i++) sel.options[i].selected=false;
-      ['heR10','heR16','heR31'].forEach(id => $(id).checked=true);
-      readFilterHE();
-      renderHE();
-    };
 
-    // EXPORTAÇÃO HE
-    function exportHE(data, name) {
-      if(!data.length) return showToast("Sem dados para exportar", false);
-      const rows = data.map(x => ({
-        "Número": x.numero || "-",
-        "Colaborador": x.colaborador || "-",
-        "Data": (x.data||'').split('-').reverse().join('/'),
-        "Tipo Escala": x.tipoEscala || "-",
-        "Tipo HE": x.tipoHoraExtra || "-",
-        "Acionado Por": x.acionadoPor || "-",
-        "Autorizado?": x.autorizadoSupervisor || "-",
-        "Início": x.horaInicio || "-",
-        "Fim": x.horaFim || "-",
-        "Duração (Min)": x.duracaoMinutos || 0,
-        "Faixa": x.faixaMinutos || "-",
-        "Status": x.status || "Pendente",
-        "Justificativa (Index)": x.justificativa || "-",
-        "Obs Auditoria": x.observacao || ""
-      }));
-      const ws = XLSX.utils.json_to_sheet(rows);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "HE");
-      XLSX.writeFile(wb, `${name}_${new Date().getTime()}.xlsx`);
-    }
-
-    $('btnExportHE').onclick = () => exportHE(runFilterHE(cacheHE), "Audit_HE_BI");
-    $('btnExportHEList').onclick = () => exportHE(cacheHE, "Audit_HE_Lista_Completa");
-
-    function renderHE(){
-      const d = runFilterHE(cacheHE);
-      const aprov = d.filter(x => x.status === 'Aprovado');
-      $('kheTotal').textContent = d.length;
-      $('kheAprov').textContent = aprov.reduce((s, x) => s + (parseInt(x.duracaoMinutos) || 0), 0);
-      $('khePend').textContent = d.filter(x => (x.status||'Pendente') === 'Pendente').length;
-      const map = {};
-      d.forEach(x=>{
-        const c = x.colaborador || '-';
-        if(!map[c]) map[c] = { c, a:0, b:0, c31:0, totalMin:0, count:0 };
-        const f = x.faixaMinutos;
-        if(f==='10-15') map[c].a++;
-        if(f==='16-30') map[c].b++;
-        if(f==='31-60') map[c].c31++;
-        map[c].totalMin += (parseInt(x.duracaoMinutos) || 0);
-        map[c].count++;
-      });
-      const arr = Object.values(map).sort((p,q)=>q.totalMin-p.totalMin);
-      const rows = arr.map((r,i)=>`<tr><td style="width:50px;font-weight:800">${i+1}º</td><td><b>${r.c}</b></td><td style="text-align:center">${r.a}</td><td style="text-align:center">${r.b}</td><td style="text-align:center">${r.c31}</td><td style="text-align:right;font-weight:900">${r.totalMin} min</td></tr>`).join('');
-      $('heRankTbl').innerHTML = `<table><thead><tr><th>POS</th><th>COLABORADOR</th><th>10-15</th><th>16-30</th><th>31-60</th><th style="text-align:right">TOTAL MIN</th></tr></thead><tbody>${rows || '<tr><td colspan="6">Sem dados</td></tr>'}</tbody></table>`;
-      const tipoMap = {};
-      const faixaMap = { '10-15':0, '16-30':0, '31-60':0 };
-      d.forEach(x=>{
-        tipoMap[x.tipoHoraExtra] = (tipoMap[x.tipoHoraExtra]||0) + 1;
-        if(x.faixaMinutos in faixaMap) faixaMap[x.faixaMinutos]++;
-      });
-      try{
-        if(window._heTipoChart) window._heTipoChart.destroy();
-        if(window._heFaixaChart) window._heFaixaChart.destroy();
-        window._heTipoChart = new Chart($('heChartTipo'), {
-          type:'doughnut',
-          data:{ labels:Object.keys(tipoMap), datasets:[{ data:Object.values(tipoMap), backgroundColor:['#1D4ED8','#0EA5E9','#10B981','#F59E0B','#EF4444'], borderWidth:0 }]},
-          options:{ maintainAspectRatio:false, cutout:'70%', plugins:{ legend:{ position:'right' }, datalabels:{ color:'#fff', font:{ weight:'bold'} } } }
-        });
-        window._heFaixaChart = new Chart($('heChartFaixa'), {
-          type:'doughnut',
-          data:{ labels:['10-15','16-30','31-60'], datasets:[{ data:[faixaMap['10-15'], faixaMap['16-30'], faixaMap['31-60']], backgroundColor:['#22c55e','#f59e0b','#ef4444'], borderWidth:0 }]},
-          options:{ maintainAspectRatio:false, cutout:'70%', plugins:{ legend:{ position:'right' }, datalabels:{ color:'#fff', font:{ weight:'bold'} } } }
-        });
-      } catch(e){}
-    }
-    function renderHELista(){
-      const rows = cacheHE.map(x=>`
-        <tr>
-          <td style="font-weight:800">#${x.numero||''}</td>
-          <td><b>${x.colaborador||'-'}</b><br><small>${x.tipoEscala||''}</small></td>
-          <td>${(x.data||'').split('-').reverse().join('/')}</td>
-          <td>${x.tipoHoraExtra||''}</td>
-          <td>${x.acionadoPor||''}</td>
-          <td>${x.autorizadoSupervisor||''}</td>
-          <td>${x.horaInicio||''} – ${x.horaFim||''}</td>
-          <td style="font-weight:900">${x.duracaoMinutos||0} min</td>
-          <td><span class="pill ${x.status==='Aprovado'?'ok':(x.status==='Reprovado'?'bad':'wait')}">${x.status||'Pendente'}</span></td>
-          <td style="font-size:10px; color:var(--text-muted); max-width:180px"><i>${x.justificativa||'-'}</i></td>
-          <td style="font-size:10px; color:var(--danger); max-width:180px">${x.observacao||''}</td>
-          <td>
-            <div style="display:flex; gap:6px">
-              <select class="input heChgStatus" data-id="${x._id}" style="padding:4px; font-size:10px; width:110px">
-                <option ${x.status==='Pendente'?'selected':''}>Pendente</option>
-                <option ${x.status==='Aprovado'?'selected':''}>Aprovado</option>
-                <option ${x.status==='Reprovado'?'selected':''}>Reprovado</option>
-              </select>
-            </div>
-          </td>
-        </tr>
-      `).join('');
-      $('heListaTbl').innerHTML = `<table><thead><tr><th>Nº</th><th>Colab</th><th>Data</th><th>Tipo</th><th>Acionado</th><th>Autorizado?</th><th>Período</th><th>Min</th><th>Status</th><th>Justif. Index</th><th>Obs Auditoria</th><th>Ação</th></tr></thead><tbody>${rows || '<tr><td colspan="12">Vazio</td></tr>'}</tbody></table>`;
-      document.querySelectorAll('.heChgStatus').forEach(s => {
-        s.onchange = async () => {
-          const id = s.dataset.id;
-          if(s.value === 'Reprovado') openEditHE(id);
-          else await db.collection('solicitacoes_hora_extra').doc(id).update({ status: s.value });
-        };
+    function runFilterHEList(data, f) {
+      return data.filter(x => {
+        if(f.colab && x.colaborador !== f.colab) return false;
+        if(f.status && (x.status || 'Pendente') !== f.status) return false;
+        if(f.acionado && x.acionadoPor !== f.acionado) return false;
+        if(f.autorizado && (x.autorizadoSupervisor || '').toUpperCase() !== f.autorizado) return false;
+        if(f.ini || f.fim) {
+          let t = new Date((x.data || '') + "T12:00:00").getTime();
+          if(f.ini && t < new Date(f.ini + "T00:00:00").getTime()) return false;
+          if(f.fim && t > new Date(f.fim + "T23:59:59").getTime()) return false;
+        }
+        return true;
       });
     }
-    function openEditHE(id){
-      const x = cacheHE.find(d => d._id === id);
-      $('modalEdit').style.display = 'flex';
-      $('editTitle').textContent = 'Motivo da Reprovação (HE)';
-      $('editBody').innerHTML = `<p style="font-size:11px">Justificativa Index: <b>${x.justificativa||'-'}</b></p><textarea id="heObs" class="input" style="height:120px" placeholder="Informe o motivo da reprovação..."></textarea>`;
-      $('btnSaveEdit').onclick = async () => {
-        const obs = $('heObs').value.trim();
-        if(!obs) return;
-        await db.collection('solicitacoes_hora_extra').doc(id).update({ status:'Reprovado', observacao: obs });
-        closeEdit();
-      };
-    }
-    $('btnAplicaDash').onclick = () => {
-      filterD.ini = $('dFiltroIni').value;
-      filterD.fim = $('dFiltroFim').value;
-      filterD.status = $('dFiltroStatus').value;
-      renderDash();
-    };
-    $('btnLimpaDash').onclick = () => {
-      ['dFiltroIni','dFiltroFim','dFiltroStatus'].forEach(id => $(id).value = '');
-      filterD = { ini: null, fim: null, status: '' };
-      renderDash();
-    };
+
     function renderDash() {
       const d = runFilter(cacheSolic, filterD);
       const aprov = d.filter(x => x.status === 'Aprovado');
@@ -591,6 +428,7 @@
       $('kAprov').textContent = aprov.length;
       $('kPend').textContent = d.filter(x => x.status === 'Pendente').length;
       $('kVal').textContent = brl(aprov.reduce((s, x) => s + (x.valor || 0), 0));
+      
       const sMap = { Pendente:0, Aprovado:0, Reprovado:0 };
       d.forEach(x => sMap[x.status]++);
       const cMap = {};
@@ -606,155 +444,205 @@
         window._c2 = new Chart($('chTop'), { type:'bar', data: { labels: top10.map(x => x.k), datasets: [{ label:'R$', data: top10.map(x => x.v), backgroundColor:'#6D28D9', borderRadius: 6 }] }, options: { indexAxis: 'y', maintainAspectRatio:false, plugins: { legend: { display: false }, datalabels: { anchor:'end', align:'end', color:'#1E293B', font:{size:10, weight:'bold'}, formatter: (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits:0 }) } }, scales: { x: { display: false }, y: { grid: { display: false } } } } });
       } catch(e){}
     }
-    $('btnAplicaLanca').onclick = () => {
-      filterL.ini = $('lFiltroIni').value;
-      filterL.fim = $('lFiltroFim').value;
-      filterL.colab = $('lFiltroColab').value;
-      renderLanca();
-    };
-    $('btnLimpaLanca').onclick = () => {
-      ['lFiltroIni','lFiltroFim','lFiltroColab'].forEach(id => $(id).value = '');
-      filterL = { ini: null, fim: null, colab: '' };
-      renderLanca();
-    };
+
     function renderLanca() {
       const d = runFilter(cacheSolic, filterL);
       const rows = d.map(x => `
         <tr>
-          <td style="font-weight:700">#${x.numero}</td>
-          <td><b>${x.colaborador || '-'}</b></td>
-          <td>${x.destino || '-'}</td>
-          <td style="font-size:11px">${x.placa || '-'}<br><small>${x.frota || '-'}</small></td>
-          <td style="white-space:nowrap">${(x.dataSaida||'').split('-').reverse().join('/')}<br><small>${x.horaSaida||''}</small></td>
-          <td style="white-space:nowrap">${x.dataRetorno ? x.dataRetorno.split('-').reverse().join('/') : '-'}<br><small>${x.horaRetorno || '-'}</small></td>
-          <td style="font-weight:700">${x.duracaoTexto || '-'}</td>
-          <td style="font-weight:800">${brl(x.valor)}</td>
+          <td>#${x.numero}</td>
+          <td><b>${x.colaborador}</b></td>
+          <td>${x.destino}</td>
+          <td>${x.placa || '-'}<br><small>${x.frota || '-'}</small></td>
+          <td>${(x.dataSaida||'').split('-').reverse().join('/')}</td>
           <td><span class="pill ${x.status==='Aprovado'?'ok':(x.status==='Reprovado'?'bad':'wait')}">${x.status}</span></td>
-          <td style="font-size:10px; color:var(--text-muted); max-width:180px"><i>${x.justificativa || '-'}</i></td>
-          <td style="font-size:10px; color:var(--danger); max-width:180px">${x.observacao || ''}</td>
+          <td style="font-weight:800">${brl(x.valor)}</td>
+          <td style="font-size:10px; max-width:150px"><i>${x.justificativa || '-'}</i></td>
+          <td style="font-size:10px; color:var(--danger); max-width:150px">${x.observacao || ''}</td>
           <td>
             <div style="display:flex; gap:5px">
-              <select class="input chgStatus" data-id="${x._id}" style="padding:4px; font-size:10px; width:90px">
+              <select class="input chgStatus" data-id="${x._id}" style="padding:4px; font-size:10px; width:95px">
                 <option ${x.status==='Pendente'?'selected':''}>Pendente</option>
                 <option ${x.status==='Aprovado'?'selected':''}>Aprovado</option>
                 <option ${x.status==='Reprovado'?'selected':''}>Reprovado</option>
               </select>
-              <button class="btn btn-primary" style="padding:6px 10px" onclick="openEditLanca('${x._id}')"><i class="fa-solid fa-pen"></i></button>
-              <button class="btn btn-danger" style="padding:6px 10px" onclick="askDelete('solic', '${x._id}')"><i class="fa-solid fa-trash"></i></button>
+              <button class="btn btn-primary" onclick="openEditLanca('${x._id}')" style="padding:5px"><i class="fa-solid fa-pen"></i></button>
             </div>
           </td>
         </tr>
       `).join('');
-      $('tblLancaContainer').innerHTML = `<table><thead><tr><th>Nº</th><th>Colab</th><th>Destino</th><th>Veículo</th><th>Saída</th><th>Chegada</th><th>Duração</th><th>Valor</th><th>Status</th><th>Justif. Index</th><th>Obs Auditoria</th><th>Ação</th></tr></thead><tbody>${rows || '<tr><td colspan="12">Vazio.</td></tr>'}</tbody></table>`;
+      $('tblLancaContainer').innerHTML = `<table><thead><tr><th>Nº</th><th>Colab</th><th>Destino</th><th>Veículo</th><th>Saída</th><th>Status</th><th>Valor</th><th>Justif. Index</th><th>Obs Auditoria</th><th>Ação</th></tr></thead><tbody>${rows || '<tr><td colspan="10">Vazio.</td></tr>'}</tbody></table>`;
       document.querySelectorAll('.chgStatus').forEach(s => { s.onchange = async () => { if(s.value==='Reprovado') openEditLanca(s.dataset.id, true); else await db.collection('solicitacoes_diaria').doc(s.dataset.id).update({status:s.value}); }; });
     }
-    $('btnImprimir').onclick = () => {
-      const d = runFilter(cacheSolic, filterL);
-      if(!d.length) return alert('Não há dados filtrados para imprimir.');
-      $('pDate').textContent = "Gerado em: " + new Date().toLocaleString();
-      $('pSub').textContent = `Período: ${$('lFiltroIni').value || 'Início'} a ${$('lFiltroFim').value || 'Fim'} | Colab: ${filterL.colab || "Todos"}`;
-      let total = 0;
-      const htmlTable = d.map(x => {
-        if(x.status === 'Aprovado') total += (x.valor || 0);
-        return `<tr><td>${x.numero}</td><td>${x.colaborador}</td><td>${x.destino}</td><td>${x.placa||'-'} / ${x.frota||'-'}</td><td>${(x.dataSaida||'').split('-').reverse().join('/')} ${x.horaSaida||''}</td><td>${x.dataRetorno?x.dataRetorno.split('-').reverse().join('/'):'-'} ${x.horaRetorno||''}</td><td>${x.duracaoTexto||'-'}</td><td>${brl(x.valor)}</td><td>${x.status}</td><td>${x.justificativa||'-'}</td><td>${x.observacao||''}</td></tr>`;
-      }).join('');
-      $('pContainer').innerHTML = `<table><thead><tr><th>Nº</th><th>Colab</th><th>Destino</th><th>Veículo</th><th>Saída</th><th>Chegada</th><th>Duração</th><th>Valor</th><th>Status</th><th>Justif. Index</th><th>Obs Auditoria</th></tr></thead><tbody>${htmlTable}</tbody></table>`;
-      $('pTotalValue').textContent = brl(total);
-      setTimeout(() => { window.print(); }, 500);
+
+    function renderHE(){
+      const d = runFilterHE(cacheHE, filterHE);
+      $('kheTotal').textContent = d.length;
+      const totalMinutosGeral = d.reduce((s, x) => s + (parseInt(x.duracaoMinutos) || 0), 0);
+      $('kheAprov').textContent = formatHours(totalMinutosGeral);
+      $('khePend').textContent = d.filter(x => (x.status||'Pendente') === 'Pendente').length;
+      
+      const map = {};
+      d.forEach(x=>{
+        const c = x.colaborador || '-';
+        if(!map[c]) map[c] = { c, a:0, b:0, c31:0, totalMin:0 };
+        const faixa = x.faixaMinutos;
+        if(faixa==='10-15') map[c].a++;
+        if(faixa==='16-30') map[c].b++;
+        if(faixa==='31-60') map[c].c31++;
+        map[c].totalMin += (parseInt(x.duracaoMinutos) || 0);
+      });
+      
+      const arr = Object.values(map).sort((p,q)=>q.totalMin - p.totalMin);
+      const rows = arr.map((r,i)=>`<tr><td>${i+1}º</td><td><b>${r.c}</b></td><td style="text-align:center">${r.a}</td><td style="text-align:center">${r.b}</td><td style="text-align:center">${r.c31}</td><td style="text-align:right; font-weight:900">${formatHours(r.totalMin)}</td></tr>`).join('');
+      $('heRankTbl').innerHTML = `<table><thead><tr><th style="width:40px">POS</th><th>COLABORADOR</th><th style="text-align:center">10-15</th><th style="text-align:center">16-30</th><th style="text-align:center">31-60</th><th style="text-align:right">TOTAL HORAS</th></tr></thead><tbody>${rows || '<tr><td colspan="6">Sem dados</td></tr>'}</tbody></table>`;
+      
+      const tipoMap = {};
+      const faixaMap = { '10-15':0, '16-30':0, '31-60':0 };
+      d.forEach(x=>{
+        tipoMap[x.tipoHoraExtra] = (tipoMap[x.tipoHoraExtra]||0) + 1;
+        if(x.faixaMinutos in faixaMap) faixaMap[x.faixaMinutos]++;
+      });
+      
+      try{
+        if(window._heTipoChart) window._heTipoChart.destroy();
+        if(window._heFaixaChart) window._heFaixaChart.destroy();
+        window._heTipoChart = new Chart($('heChartTipo'), { type:'doughnut', data:{ labels:Object.keys(tipoMap), datasets:[{ data:Object.values(tipoMap), backgroundColor:['#1D4ED8','#0EA5E9','#10B981','#F59E0B','#EF4444'], borderWidth:0 }]}, options:{ maintainAspectRatio:false, plugins:{ legend:{ position:'right' }, datalabels:{ color:'#fff', font:{weight:'bold'} } } } });
+        window._heFaixaChart = new Chart($('heChartFaixa'), { type:'doughnut', data:{ labels:['10-15','16-30','31-60'], datasets:[{ data:[faixaMap['10-15'], faixaMap['16-30'], faixaMap['31-60']], backgroundColor:['#22c55e','#f59e0b','#ef4444'], borderWidth:0 }]}, options:{ maintainAspectRatio:false, plugins:{ legend:{ position:'right' }, datalabels:{ color:'#fff', font:{weight:'bold'} } } } });
+      } catch(e){}
+    }
+
+    function renderHELista(){
+      const d = runFilterHEList(cacheHE, filterHEList);
+      const rows = d.map(x=>`
+        <tr>
+          <td>#${x.numero||''}</td>
+          <td><b>${x.colaborador}</b></td>
+          <td>${(x.data||'').split('-').reverse().join('/')}</td>
+          <td>${x.acionadoPor||''}</td>
+          <td>${x.autorizadoSupervisor||''}</td>
+          <td>${x.horaInicio} – ${x.horaFim}</td>
+          <td><b>${x.duracaoMinutos} min</b></td>
+          <td><span class="pill ${x.status==='Aprovado'?'ok':(x.status==='Reprovado'?'bad':'wait')}">${x.status||'Pendente'}</span></td>
+          <td style="font-size:10px; max-width:180px"><i>${x.justificativa || '-'}</i></td>
+          <td style="font-size:10px; color:var(--danger); max-width:180px">${x.observacao || ''}</td>
+          <td>
+            <select class="input heChgStatus" data-id="${x._id}" style="padding:4px; font-size:10px; width:110px">
+              <option ${x.status==='Pendente'?'selected':''}>Pendente</option>
+              <option ${x.status==='Aprovado'?'selected':''}>Aprovado</option>
+              <option ${x.status==='Reprovado'?'selected':''}>Reprovado</option>
+            </select>
+          </td>
+        </tr>
+      `).join('');
+      $('heListaTbl').innerHTML = `<table><thead><tr><th>Nº</th><th>Colab</th><th>Data</th><th>Acionado</th><th>Autorizado</th><th>Período</th><th>Min</th><th>Status</th><th>Justif. Index</th><th>Obs Auditoria</th><th>Ação</th></tr></thead><tbody>${rows || '<tr><td colspan="11">Vazio</td></tr>'}</tbody></table>`;
+      document.querySelectorAll('.heChgStatus').forEach(s => { s.onchange = async () => { if(s.value === 'Reprovado') openEditHE(s.dataset.id); else await db.collection('solicitacoes_hora_extra').doc(s.dataset.id).update({ status: s.value }); }; });
+    }
+
+    function populateFilters() {
+      const nomes = [...new Set(cacheSolic.map(d => d.colaborador).filter(Boolean))].sort();
+      const sel = $('lFiltroColab'); sel.innerHTML = '<option value="">Todos os Colaboradores</option>';
+      nomes.forEach(n => sel.innerHTML += `<option value="${n}">${n}</option>`);
+    }
+
+    function populateHEFilters() {
+      const nomes = [...new Set(cacheHE.map(d => d.colaborador).filter(Boolean))].sort();
+      const sel = $('heLFiltroColab'); sel.innerHTML = '<option value="">Todos os Colaboradores</option>';
+      nomes.forEach(n => sel.innerHTML += `<option value="${n}">${n}</option>`);
+    }
+
+    $('btnAplicaDash').onclick = () => { filterD.ini = $('dFiltroIni').value; filterD.fim = $('dFiltroFim').value; filterD.status = $('dFiltroStatus').value; renderDash(); };
+    $('btnLimpaDash').onclick = () => { ['dFiltroIni','dFiltroFim','dFiltroStatus'].forEach(id => $(id).value = ''); filterD = { ini: null, fim: null, status: '' }; renderDash(); };
+    $('btnAplicaLanca').onclick = () => { filterL.ini = $('lFiltroIni').value; filterL.fim = $('lFiltroFim').value; filterL.colab = $('lFiltroColab').value; renderLanca(); };
+    $('btnLimpaLanca').onclick = () => { ['lFiltroIni','lFiltroFim','lFiltroColab'].forEach(id => $(id).value = ''); filterL = { ini: null, fim: null, colab: '' }; renderLanca(); };
+
+    $('btnAplicaHE').onclick = () => {
+      filterHE.ini = $('heFiltroIni').value; filterHE.fim = $('heFiltroFim').value; filterHE.status = $('heFiltroStatus').value;
+      filterHE.acionado = $('heFiltroAcionado').value; filterHE.autorizado = $('heFiltroAutorizado').value;
+      filterHE.tipos = Array.from($('heFiltroTipo').selectedOptions).map(o=>o.value);
+      filterHE.r10 = $('heR10').checked; filterHE.r16 = $('heR16').checked; filterHE.r31 = $('heR31').checked;
+      renderHE();
+    };
+    $('btnLimpaHE').onclick = () => { 
+      ['heFiltroIni','heFiltroFim','heFiltroStatus','heFiltroAcionado','heFiltroAutorizado'].forEach(id => $(id).value=''); 
+      const s=$('heFiltroTipo'); for(let i=0;i<s.options.length;i++) s.options[i].selected=false;
+      ['heR10','heR16','heR31'].forEach(id => $(id).checked=true);
+      filterHE = { ini: null, fim: null, tipos: [], acionado: '', autorizado: '', status:'', r10:true, r16:true, r31:true };
+      renderHE();
     };
 
-    // EXPORTAÇÃO EXCEL VIAGENS
-    function exportToExcel(data, fileNamePrefix) {
-      if(!data.length) return showToast("Sem dados para exportar", false);
-      const rows = data.map(x => ({
-        "Nº Solicitação": x.numero,
-        "Colaborador": x.colaborador,
-        "Destino": x.destino,
-        "Placa": x.placa || "-",
-        "Nº Frota": x.frota || "-",
-        "Data Saída": (x.dataSaida||'').split('-').reverse().join('/'),
-        "Hora Saída": x.horaSaida || "-",
-        "Data Chegada": x.dataRetorno ? x.dataRetorno.split('-').reverse().join('/') : "-",
-        "Hora Chegada": x.horaRetorno || "-",
-        "Duração": x.duracaoTexto || "-",
-        "Valor (R$)": x.valor || 0,
-        "Status": x.status,
-        "Justificativa (Index)": x.justificativa || "-",
-        "Obs Auditoria": x.observacao || ""
-      }));
-      const ws = XLSX.utils.json_to_sheet(rows);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Dados AUDIT");
-      XLSX.writeFile(wb, `${fileNamePrefix}_${new Date().getTime()}.xlsx`);
-    }
-
-    $('btnExportDash').onclick = () => exportToExcel(runFilter(cacheSolic, filterD), "Audit_Dashboard");
-    $('btnExport').onclick = () => exportToExcel(runFilter(cacheSolic, filterL), "Audit_Lancamentos");
-
-    function renderVeiculos() {
-      const rows = cacheVeic.map(v => `<tr><td><b>${v._id}</b></td><td>${v.frota || '-'}</td><td><div style="display:flex;gap:5px"><button class="btn btn-primary" onclick="openEditVeic('${v._id}')" style="padding:6px"><i class="fa-solid fa-pen"></i></button><button class="btn btn-danger" onclick="askDelete('veic','${v._id}')" style="padding:6px"><i class="fa-solid fa-trash"></i></button></div></td></tr>`).join('');
-      $('tblVeicContainer').innerHTML = `<table><thead><tr><th>Placa</th><th>Frota</th><th>Ação</th></tr></thead><tbody>${rows || '<tr><td colspan="3">Vazio</td></tr>'}</tbody></table>`;
-    }
-    function openSpreadsheet(t) { activeSheetType = t; $('modalSheet').style.display = 'flex'; $('sheetTitle').textContent = t === 'mass' ? 'Atualizar Status' : 'Cadastrar Frota'; $('sheetHead').innerHTML = t === 'mass' ? `<tr><th style="width:40px">#</th><th>Nº Solicitação</th><th>Novo Status</th></tr>` : `<tr><th style="width:40px">#</th><th>Placa</th><th>Frota</th></tr>`; $('sheetBody').innerHTML = ''; addRows(100); }
-    function closeSpreadsheet() { $('modalSheet').style.display = 'none'; }
-    function addRows(n) {
-      const b = $('sheetBody'); const start = b.children.length;
-      for(let i=0; i<n; i++) {
-        const tr = document.createElement('tr'); tr.innerHTML = `<td class="row-num">${start+i+1}</td><td><div class="cell" contenteditable="true"></div></td><td><div class="cell" contenteditable="true"></div></td>`;
-        tr.cells[1].querySelector('div').onpaste = (e) => {
-          e.preventDefault(); const text = (e.clipboardData || window.clipboardData).getData('text').trim();
-          text.split(/\r?\n/).forEach((l, idx) => {
-            const cols = l.split('\t'); const target = $('sheetBody').rows[start + idx];
-            if(target) { target.cells[1].querySelector('div').innerText = cols[0] || ''; target.cells[2].querySelector('div').innerText = cols[1] || ''; }
-          });
-        };
-        b.appendChild(tr);
-      }
-    }
-    $('btnSaveSheet').onclick = async () => {
-      const btn = $('btnSaveSheet'); btn.disabled = true; btn.textContent = 'Salvando...';
-      const rows = Array.from($('sheetBody').rows);
-      for(let r of rows) {
-        const v1 = r.cells[1].querySelector('div').innerText.trim();
-        const v2 = r.cells[2].querySelector('div').innerText.trim();
-        if(!v1) continue;
-        if(activeSheetType === 'mass') {
-          const q = await db.collection('solicitacoes_diaria').where('numero', '==', String(v1)).get();
-          if(!q.empty) await q.docs[0].ref.update({ status: v2 || 'Aprovado' });
-        } else {
-          await db.collection('veiculos').doc(v1.toUpperCase()).set({ frota: v2 || '' });
-        }
-      }
-      closeSpreadsheet(); btn.disabled = false; btn.textContent = 'Salvar Dados';
+    $('btnAplicaHEList').onclick = () => {
+      filterHEList.colab = $('heLFiltroColab').value; filterHEList.ini = $('heLFiltroIni').value;
+      filterHEList.fim = $('heLFiltroFim').value; filterHEList.status = $('heLFiltroStatus').value;
+      filterHEList.acionado = $('heLFiltroAcionado').value; filterHEList.autorizado = $('heLFiltroAutorizado').value;
+      renderHELista();
     };
+    $('btnLimpaHEList').onclick = () => {
+      ['heLFiltroColab','heLFiltroIni','heLFiltroFim','heLFiltroStatus','heLFiltroAcionado','heLFiltroAutorizado'].forEach(id => $(id).value = '');
+      filterHEList = { ini: null, fim: null, colab: '', status: '', acionado: '', autorizado: '' };
+      renderHELista();
+    };
+
+    function exportToExcel(data, prefix) {
+      if(!data.length) return showToast("Sem dados", false);
+      const ws = XLSX.utils.json_to_sheet(data); const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Audit");
+      XLSX.writeFile(wb, `${prefix}_${new Date().getTime()}.xlsx`);
+    }
+
+    $('btnExportDash').onclick = () => exportToExcel(runFilter(cacheSolic, filterD).map(x => ({ Nº: x.numero, Colab: x.colaborador, Valor: x.valor, Status: x.status, "Justif. Index": x.justificativa, "Obs Auditoria": x.observacao })), "Dash_Viagens");
+    $('btnExport').onclick = () => exportToExcel(runFilter(cacheSolic, filterL).map(x => ({ Nº: x.numero, Colab: x.colaborador, Destino: x.destino, Status: x.status, "Justif. Index": x.justificativa, "Obs Auditoria": x.observacao })), "Lista_Viagens");
+    $('btnExportHE').onclick = () => exportToExcel(runFilterHE(cacheHE, filterHE).map(x => ({ Nº: x.numero, Colab: x.colaborador, Duração: formatHours(x.duracaoMinutos), Status: x.status })), "BI_HE");
+    $('btnExportHEList').onclick = () => exportToExcel(runFilterHEList(cacheHE, filterHEList).map(x => ({ Nº: x.numero, Colab: x.colaborador, Data: x.data, Duração: formatHours(x.duracaoMinutos), Status: x.status, "Justif. Index": x.justificativa, "Obs Auditoria": x.observacao })), "Lista_HE");
+
     function openEditLanca(id, reprove = false) {
       const x = cacheSolic.find(d => d._id === id);
-      $('modalEdit').style.display = 'flex'; $('editTitle').textContent = reprove ? 'Motivo da Reprovação' : 'Editar #' + x.numero;
+      $('modalEdit').style.display = 'flex'; $('editTitle').textContent = reprove ? 'Reprovar #' + x.numero : 'Editar #' + x.numero;
       if(reprove) {
-        $('editBody').innerHTML = `<p style="font-size:11px">Justificativa Index: <b>${x.justificativa||'-'}</b></p><textarea id="eObs" class="input" style="height:120px" placeholder="Informe o motivo da reprovação..."></textarea>`;
-        $('btnSaveEdit').onclick = async () => { if(!$('eObs').value) return; await db.collection('solicitacoes_diaria').doc(id).update({ status:'Reprovado', observacao:$('eObs').value }); closeEdit(); };
+        $('editBody').innerHTML = `<p style="font-size:11px">Justificativa Index: <b>${x.justificativa||'-'}</b></p><textarea id="eObs" class="input" style="height:100px" placeholder="Motivo..."></textarea>`;
+        $('btnSaveEdit').onclick = async () => { const obs = $('eObs').value.trim(); if(!obs) return; await db.collection('solicitacoes_diaria').doc(id).update({ status: 'Reprovado', observacao: obs }); closeEdit(); };
       } else {
-        $('editBody').innerHTML = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div><label>DESTINO</label><input id="edD" class="input" value="${x.destino}"></div><div><label>VALOR</label><input id="edV" type="number" step="0.01" class="input" value="${x.valor}"></div></div><div><label>OBS AUDITORIA (ANOTAÇÃO)</label><textarea id="edO" class="input" style="height:80px">${x.observacao||''}</textarea></div>`;
-        $('btnSaveEdit').onclick = async () => { await db.collection('solicitacoes_diaria').doc(id).update({ destino: $('edD').value, valor: parseFloat($('edV').value), observacao: $('edO').value }); closeEdit(); };
+        $('editBody').innerHTML = `<div><label>VALOR</label><input id="edV" type="number" step="0.01" class="input" value="${x.valor}"></div><div><label>OBS AUDITORIA</label><textarea id="edO" class="input" style="height:60px">${x.observacao||''}</textarea></div>`;
+        $('btnSaveEdit').onclick = async () => { await db.collection('solicitacoes_diaria').doc(id).update({ valor: parseFloat($('edV').value), observacao: $('edO').value }); closeEdit(); };
       }
     }
-    function openEditVeic(p) {
-      const v = cacheVeic.find(x => x._id === p);
-      $('modalEdit').style.display = 'flex'; $('editTitle').textContent = "Frota " + p;
-      $('editBody').innerHTML = `<div><label>Nº DA FROTA</label><input id="edF" class="input" value="${v.frota || ''}"></div>`;
-      $('btnSaveEdit').onclick = async () => { await db.collection('veiculos').doc(p).update({ frota: $('edF').value }); closeEdit(); };
-    }
-    function askDelete(t, id) { delType = t; delId = id; $('modalConfirm').style.display = 'flex'; $('confirmMsg').textContent = `Excluir o registro ${id}?`; }
-    function closeConfirm() { $('modalConfirm').style.display = 'none'; }
-    function closeEdit() { $('modalEdit').style.display = 'none'; }
-    $('btnDeleteConfirm').onclick = async () => { if(delType==='veic') await db.collection('veiculos').doc(delId).delete(); else await db.collection('solicitacoes_diaria').doc(delId).delete(); closeConfirm(); };
 
-    function showToast(msg, ok=true){ const t=$('toast'); if(!t) return; t.textContent=msg; t.classList.remove('error'); if(!ok) t.classList.add('error'); t.classList.add('show'); setTimeout(()=>{ t.classList.remove('show'); t.classList.remove('error'); }, 3000); }
-    const recLink=$('recSenha'); const loginScreen=$('loginScreen'); const recoverScreen=$('recoverScreen'); const backBtn=$('btnBackLogin'); const sendBtn=$('btnSendReset');
-    if(recLink){ recLink.onclick = ()=>{ loginScreen.style.display='none'; recoverScreen.style.display='flex'; }; }
-    if(backBtn){ backBtn.onclick = ()=>{ recoverScreen.style.display='none'; loginScreen.style.display='flex'; }; }
-    if(sendBtn){ sendBtn.onclick = async ()=>{ const e = ($('recEmail')?.value || $('email')?.value || '').trim(); if(!e){ showToast('Digite seu e-mail.', false); return; } try{ await auth.sendPasswordResetEmail(e); showToast('Link enviado!'); } catch(err){ showToast('Erro ao enviar.', false); } }; }
+    function openEditHE(id) {
+      const x = cacheHE.find(d => d._id === id);
+      $('modalEdit').style.display = 'flex'; $('editTitle').textContent = 'Reprovar HE #' + (x.numero||'');
+      $('editBody').innerHTML = `<p style="font-size:11px">Justificativa Index: <b>${x.justificativa||'-'}</b></p><textarea id="heObs" class="input" style="height:100px" placeholder="Informe o motivo..."></textarea>`;
+      $('btnSaveEdit').onclick = async () => { const obs = $('heObs').value.trim(); if(!obs) return; await db.collection('solicitacoes_hora_extra').doc(id).update({ status: 'Reprovado', observacao: obs }); closeEdit(); };
+    }
+
+    function closeEdit() { $('modalEdit').style.display = 'none'; }
+    function closeSpreadsheet() { $('modalSheet').style.display = 'none'; }
+    function setModo(m){
+      const isV = m === 'viagem';
+      $('mViagem').classList.toggle('active', isV); $('mHE').classList.toggle('active', !isV);
+      document.querySelectorAll('#nav a').forEach(a => { const t = a.dataset.tab; if(['dash','lanca','mass','veic'].includes(t)) a.style.display = isV ? 'flex' : 'none'; if(['heDash','heLanca'].includes(t)) a.style.display = isV ? 'none' : 'flex'; });
+      const target = isV ? document.querySelector('#nav a[data-tab="dash"]') : document.querySelector('#nav a[data-tab="heDash"]');
+      if(target) target.click();
+    }
+    $('btnModeSwitch').onclick = () => setModo($('mViagem').classList.contains('active') ? 'he' : 'viagem');
+
+    function renderVeiculos() {
+      const rows = cacheVeic.map(v => `<tr><td><b>${v._id}</b></td><td>${v.frota || '-'}</td><td><button class="btn btn-danger" onclick="askDelete('veic','${v._id}')" style="padding:5px"><i class="fa-solid fa-trash"></i></button></td></tr>`).join('');
+      $('tblVeicContainer').innerHTML = `<table><thead><tr><th>Placa</th><th>Frota</th><th>Ação</th></tr></thead><tbody>${rows || '<tr><td colspan="3">Vazio</td></tr>'}</tbody></table>`;
+    }
+    function askDelete(t, id) { delType = t; delId = id; $('modalConfirm').style.display = 'flex'; }
+    function closeConfirm() { $('modalConfirm').style.display = 'none'; }
+    $('btnDeleteConfirm').onclick = async () => { if(delType==='veic') await db.collection('veiculos').doc(delId).delete(); else await db.collection('solicitacoes_diaria').doc(delId).delete(); closeConfirm(); };
+    function showToast(msg, ok=true){ const t=$('toast'); if(!t) return; t.textContent=msg; t.classList.toggle('error', !ok); t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 3000); }
+    function openSpreadsheet(t) { activeSheetType = t; $('modalSheet').style.display = 'flex'; $('sheetTitle').textContent = t === 'mass' ? 'Status em Massa' : 'Gestão Frota'; addRows(50); }
+    function addRows(n) { const b = $('sheetBody'); for(let i=0; i<n; i++) { const tr = document.createElement('tr'); const num = b.children.length + 1; tr.innerHTML = `<td class="row-num">${num}</td><td><div class="cell" contenteditable="true"></div></td><td><div class="cell" contenteditable="true"></div></td>`; b.appendChild(tr); } }
+    $('btnSaveSheet').onclick = async () => { const rows = Array.from($('sheetBody').rows); for(let r of rows) { const v1 = r.cells[1].querySelector('div').innerText.trim(); const v2 = r.cells[2].querySelector('div').innerText.trim(); if(!v1) continue; if(activeSheetType === 'mass') { const q = await db.collection('solicitacoes_diaria').where('numero', '==', String(v1)).get(); if(!q.empty) await q.docs[0].ref.update({ status: v2 || 'Aprovado' }); } else { await db.collection('veiculos').doc(v1.toUpperCase()).set({ frota: v2 || '' }); } } closeSpreadsheet(); };
   </script>
+  <div id="modalSheet" class="modal-overlay">
+    <div class="modal-content">
+      <div style="display:flex; justify-content:space-between; align-items:center"><h2 id="sheetTitle">Planilha</h2><button class="btn-light" onclick="closeSpreadsheet()"><i class="fa-solid fa-xmark"></i></button></div>
+      <div class="spreadsheet-wrap"><table class="sheet-table" id="mainSheet"><thead id="sheetHead"><tr><th>#</th><th>Campo 1</th><th>Campo 2</th></tr></thead><tbody id="sheetBody"></tbody></table></div>
+      <div style="display:flex; justify-content:space-between"><button class="btn btn-light" onclick="addRows(50)">+ 50 Linhas</button><button class="btn btn-primary" id="btnSaveSheet">Salvar Dados</button></div>
+    </div>
+  </div>
   <div id="toast" class="toast"></div>
 </body>
 </html>
