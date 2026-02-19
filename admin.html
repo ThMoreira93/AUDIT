@@ -449,28 +449,30 @@
       const d = runFilter(cacheSolic, filterL);
       const rows = d.map(x => `
         <tr>
-          <td>#${x.numero}</td>
-          <td><b>${x.colaborador}</b></td>
-          <td>${x.destino}</td>
-          <td>${x.placa || '-'}<br><small>${x.frota || '-'}</small></td>
-          <td>${(x.dataSaida||'').split('-').reverse().join('/')}</td>
-          <td><span class="pill ${x.status==='Aprovado'?'ok':(x.status==='Reprovado'?'bad':'wait')}">${x.status}</span></td>
+          <td style="font-weight:700">#${x.numero}</td>
+          <td><b>${x.colaborador || '-'}</b></td>
+          <td>${x.destino || '-'}</td>
+          <td style="font-size:11px">${x.placa || '-'}<br><small>${x.frota || '-'}</small></td>
+          <td style="white-space:nowrap">${(x.dataSaida||'').split('-').reverse().join('/')}<br><small>${x.horaSaida||''}</small></td>
+          <td style="white-space:nowrap">${x.dataRetorno ? x.dataRetorno.split('-').reverse().join('/') : '-'}<br><small>${x.horaRetorno || '-'}</small></td>
+          <td style="font-weight:700">${x.duracaoTexto || '-'}</td>
           <td style="font-weight:800">${brl(x.valor)}</td>
-          <td style="font-size:10px; max-width:150px"><i>${x.justificativa || '-'}</i></td>
-          <td style="font-size:10px; color:var(--danger); max-width:150px">${x.observacao || ''}</td>
+          <td><span class="pill ${x.status==='Aprovado'?'ok':(x.status==='Reprovado'?'bad':'wait')}">${x.status}</span></td>
+          <td style="font-size:10px; color:var(--text-muted); max-width:180px">${x.observacao || ''}</td>
           <td>
             <div style="display:flex; gap:5px">
-              <select class="input chgStatus" data-id="${x._id}" style="padding:4px; font-size:10px; width:95px">
+              <select class="input chgStatus" data-id="${x._id}" style="padding:4px; font-size:10px; width:90px">
                 <option ${x.status==='Pendente'?'selected':''}>Pendente</option>
                 <option ${x.status==='Aprovado'?'selected':''}>Aprovado</option>
                 <option ${x.status==='Reprovado'?'selected':''}>Reprovado</option>
               </select>
-              <button class="btn btn-primary" onclick="openEditLanca('${x._id}')" style="padding:5px"><i class="fa-solid fa-pen"></i></button>
+              <button class="btn btn-primary" style="padding:6px 10px" onclick="openEditLanca('${x._id}')"><i class="fa-solid fa-pen"></i></button>
+              <button class="btn btn-danger" style="padding:6px 10px" onclick="askDelete('solic', '${x._id}')"><i class="fa-solid fa-trash"></i></button>
             </div>
           </td>
         </tr>
       `).join('');
-      $('tblLancaContainer').innerHTML = `<table><thead><tr><th>Nº</th><th>Colab</th><th>Destino</th><th>Veículo</th><th>Saída</th><th>Status</th><th>Valor</th><th>Justif. Index</th><th>Obs Auditoria</th><th>Ação</th></tr></thead><tbody>${rows || '<tr><td colspan="10">Vazio.</td></tr>'}</tbody></table>`;
+      $('tblLancaContainer').innerHTML = `<table><thead><tr><th>Nº</th><th>Colab</th><th>Destino</th><th>Veículo</th><th>Saída</th><th>Chegada</th><th>Duração</th><th>Valor</th><th>Status</th><th>Obs</th><th>Ação</th></tr></thead><tbody>${rows || '<tr><td colspan="11">Vazio.</td></tr>'}</tbody></table>`;
       document.querySelectorAll('.chgStatus').forEach(s => { s.onchange = async () => { if(s.value==='Reprovado') openEditLanca(s.dataset.id, true); else await db.collection('solicitacoes_diaria').doc(s.dataset.id).update({status:s.value}); }; });
     }
 
